@@ -3,7 +3,7 @@ type structureType
 @val external structureSpawn: structureType = "STRUCTURE_SPAWN"
 @val external structureTower: structureType = "STRUCTURE_TOWER"
 @val external structureRoad: structureType = "STRUCTURE_ROAD"
-@val external structureContainer: structureType = "STRUCTURE_CONTAINER"
+@val external structureContainerC: structureType = "STRUCTURE_CONTAINER"
 @val external structureWall: structureType = "STRUCTURE_WALL"
 @val external structureRampart: structureType = "STRUCTURE_RAMPART"
 
@@ -28,19 +28,46 @@ type bodyPart
 // STRUCTURE_FACTORY: "factory",
 // STRUCTURE_INVADER_CORE: "invaderCore",
 
-type pos = {
-  x: int,
-  y: int,
+type roomPosition = {"x": int, "y": int, "roomName": string}
+type store = {"dummy": int}
+type structure = {
+  "pos": roomPosition,
+  // "room": room,
+  "id": string,
+  "structureType": structureType,
+  "store": store,
+  "hits": int,
+  "hitsMax": int,
 }
-type controller = {
-  pos: pos,
-  ticksToDowngrade: int,
+type structureController = {
+  "pos": roomPosition,
+  // "room": room,
+  "id": string,
+  "structureType": structureType,
+  "store": store,
+  "hits": int,
+  "hitsMax": int,
 }
-type room = {
-  controller: controller,
-  energyAvailable: int,
+type structureContainer = {
+  "pos": roomPosition,
+  // "room": room,
+  "id": string,
+  "structureType": structureType,
+  "store": store,
+  "hits": int,
+  "hitsMax": int,
 }
-type store = {fakeField: int}
+type structureExtension = {
+  "pos": roomPosition,
+  // "room": room,
+  "id": string,
+  "structureType": structureType,
+  "store": store,
+  "hits": int,
+  "hitsMax": int,
+}
+type room = {"controller": structureController, "energyAvailable": int}
+type roomObject = {"pos": roomPosition, "room": room}
 
 type stats = {
   gcl: float,
@@ -51,30 +78,18 @@ type stats = {
   bucket: int,
 }
 
-type memory = {
-  fakeField: int
-}
+type memory = {fakeField: int}
 
-type resource = {pos: pos, amount: int}
-
-type structure = {
-  id: string,
-  structureType: structureType,
-  pos: pos,
-  room: room,
-  store: store,
-  hits: int,
-  hitsMax: int,
-}
+type resource = {pos: roomPosition, amount: int}
 
 type constructionSite = {
-  pos: pos,
+  pos: roomPosition,
   structureType: structureType,
 }
 
-type spawn = {room: room}
+type spawn = {...structure, "room": room}
 
-type source = {pos: pos}
+type source = {pos: roomPosition}
 
 type body = {
   boost: string,
@@ -86,7 +101,7 @@ type creep = {
   id: int,
   my: bool,
   name: string,
-  pos: pos,
+  pos: roomPosition,
   store: store,
   room: room,
   memory: memory,
@@ -94,13 +109,13 @@ type creep = {
 }
 
 type tower = {
-  pos: pos,
+  pos: roomPosition,
   id: int,
   store: store,
   room: room,
 }
 
-type flag = {pos: pos}
+type flag = {pos: roomPosition}
 
 type gcl = {
   level: int,
@@ -151,14 +166,6 @@ external getCreepById: (game, string) => option<creep> = "getObjectById"
 
 @val external resourceEnergy: 'a = "RESOURCE_ENERGY"
 
-type findType
-@val external findConstructionSiteT: findType = "FIND_CONSTRUCTION_SITES"
-@val external findSourceT: findType = "FIND_SOURCES"
-@val external findStructureT: findType = "FIND_STRUCTURES"
-@val external findResourceT: findType = "FIND_DROPPED_RESOURCES"
-@val external findMyStructureT: findType = "FIND_MY_STRUCTURES"
-@val external findHostileCreepT: findType = "FIND_HOSTILE_CREEPS"
-
 type actionErr
 @val external ok: actionErr = "OK" // 0
 @val external errNotOwner: actionErr = "ERR_NOT_OWNER" // -1
@@ -192,7 +199,8 @@ type structureOrResource = Resource(resource) | Structure(structure)
 module Private = {
   type any
   @send @return(nullable)
-  external findClosestByPath: (pos, array<StructureOrResource.t>) => option<any> = "findClosestByPath"
+  external findClosestByPath: (roomPosition, array<StructureOrResource.t>) => option<any> =
+    "findClosestByPath"
   type typeName = [#RESOURCE | #STRUCTURE]
   let getType: any => typeName = %raw(`x => {
       if (x instanceof Resource) { return "RESOURCE" }
@@ -208,35 +216,35 @@ module Private = {
 
 // pos functions
 @send @return(nullable)
-external findClosestByPathCS: (pos, array<constructionSite>) => option<constructionSite> =
+external findClosestByPathCS: (roomPosition, array<constructionSite>) => option<constructionSite> =
   "findClosestByPath"
 @send @return(nullable)
-external findClosestByPathSource: (pos, array<source>) => option<source> = "findClosestByPath"
+external findClosestByPathSource: (roomPosition, array<source>) => option<source> = "findClosestByPath"
 @send @return(nullable)
-external findClosestByPathCreep: (pos, array<creep>) => option<creep> = "findClosestByPath"
+external findClosestByPathCreep: (roomPosition, array<creep>) => option<creep> = "findClosestByPath"
 @send @return(nullable)
-external findClosestByPathStructure: (pos, array<structure>) => option<structure> =
+external findClosestByPathStructure: (roomPosition, array<structure>) => option<structure> =
   "findClosestByPath"
 @send @return(nullable)
-external findClosestByPathResource: (pos, array<resource>) => option<resource> = "findClosestByPath"
+external findClosestByPathResource: (roomPosition, array<resource>) => option<resource> = "findClosestByPath"
 let findClosestByPath = (pos, array: array<StructureOrResource.t>) =>
-  Private.findClosestByPath(pos, array)
-  ->Belt.Option.map(Private.classify)
+  Private.findClosestByPath(pos, array)->Belt.Option.map(Private.classify)
 
 // spawn functions
 @send external spawnCreep: (spawn, array<bodyPart>, string) => actionErr = "spawnCreep"
 @send external spawnCreepOpts: (spawn, array<bodyPart>, string, 'a) => actionErr = "spawnCreep"
 
 // creep functions
-@send external moveTo: (creep, pos) => actionErr = "moveTo"
+@send external moveTo: (creep, roomPosition) => actionErr = "moveTo"
 @send external moveToPos: (creep, int, int) => actionErr = "moveTo"
 @send external harvest: (creep, source) => actionErr = "harvest"
 @send external withdraw: (creep, structure, 'a) => actionErr = "withdraw"
 @send external drop: (creep, 'a) => actionErr = "drop"
 @send external pickup: (creep, resource) => actionErr = "pickup"
-@send external transfer: (creep, structure, 'a) => actionErr = "transfer"
+@send external transferStructure: (creep, structure, 'a) => actionErr = "transfer"
+@send external transferSpawn: (creep, spawn, 'a) => actionErr = "transfer"
 @send external say: (creep, string) => unit = "say"
-@send external upgradeController: (creep, controller) => actionErr = "upgradeController"
+@send external upgradeController: (creep, structureController) => actionErr = "upgradeController"
 @send external build: (creep, constructionSite) => actionErr = "build"
 @send external repair: (creep, structure) => actionErr = "repair"
 
@@ -250,12 +258,11 @@ let findClosestByPath = (pos, array: array<StructureOrResource.t>) =>
 @send external getFreeCapacityE: (store, 'a) => int = "getFreeCapacity"
 @send external getUsedCapacityE: (store, 'a) => int = "getUsedCapacity"
 
-
-@send external findExitTop: (room, @as(1) _) => array<pos> = "find"
-@send external findExitRight: (room, @as(3) _) => array<pos> = "find"
-@send external findExitBottom: (room, @as(5) _) => array<pos> = "find"
-@send external findExitLeft: (room, @as(7) _) => array<pos> = "find"
-@send external findExit: (room, @as(10) _) => array<pos> = "find"
+@send external findExitTop: (room, @as(1) _) => array<roomPosition> = "find"
+@send external findExitRight: (room, @as(3) _) => array<roomPosition> = "find"
+@send external findExitBottom: (room, @as(5) _) => array<roomPosition> = "find"
+@send external findExitLeft: (room, @as(7) _) => array<roomPosition> = "find"
+@send external findExit: (room, @as(10) _) => array<roomPosition> = "find"
 @send external findCreeps: (room, @as(101) _) => array<creep> = "find"
 @send external findMyCreeps: (room, @as(102) _) => array<creep> = "find"
 @send external findHostileCreeps: (room, @as(103) _) => array<creep> = "find"
@@ -271,4 +278,4 @@ let findClosestByPath = (pos, array: array<StructureOrResource.t>) =>
 @send external findHostileSpawns: (room, @as(113) _) => array<spawn> = "find"
 @send external findMyConstructionSites: (room, @as(114) _) => array<constructionSite> = "find"
 @send external findHostileConstructionSites: (room, @as(115) _) => array<constructionSite> = "find"
-@send external findMinerals: (room, @as(116) _) => array<pos> = "find"
+@send external findMinerals: (room, @as(116) _) => array<roomPosition> = "find"

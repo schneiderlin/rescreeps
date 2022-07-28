@@ -1,3 +1,8 @@
+open Binding
+
 let loop = () => {
-    Js.log("hello world from rescript")
+    game.creeps->Js.Dict.keys->Js.Array2.forEach(name => {
+        let creep = game.creeps->Js.Dict.get(name)->Belt.Option.getUnsafe
+        RoleHarvester.roleHarvester(creep)
+    })
 }
