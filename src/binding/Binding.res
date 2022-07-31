@@ -78,7 +78,7 @@ type stats = {
   bucket: int,
 }
 
-type memory = {fakeField: int}
+type memory = {role: string}
 
 type resource = {pos: roomPosition, amount: int}
 
@@ -255,6 +255,7 @@ let findClosestByPath = (pos, array: array<StructureOrResource.t>) =>
 
 // store functions
 @send external getFreeCapacity: store => int = "getFreeCapacity"
+@send external getCapacity: store => int = "getCapacity"
 @send external getFreeCapacityE: (store, 'a) => int = "getFreeCapacity"
 @send external getUsedCapacityE: (store, 'a) => int = "getUsedCapacity"
 

@@ -169,7 +169,7 @@ js_dict.fromList = fromList;
 js_dict.fromArray = fromArray;
 js_dict.map = map;
 
-var RoleHarvester_bs = {};
+var RoleUpgrader_bs = {};
 
 var caml_obj = {};
 
@@ -905,6 +905,30 @@ caml_array.blit = blit;
 caml_array.get = get;
 caml_array.set = set;
 
+var Caml_obj$1 = caml_obj;
+var Caml_array$1 = caml_array;
+
+function roleUpgrader(creep) {
+  if (creep.store.getUsedCapacity(RESOURCE_ENERGY) !== 0) {
+    if (Caml_obj$1.caml_equal(creep.upgradeController(creep.room.controller), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(creep.room.controller.pos);
+      return ;
+    } else {
+      return ;
+    }
+  }
+  var sources = creep.room.find(105);
+  if (Caml_obj$1.caml_equal(creep.harvest(Caml_array$1.get(sources, 0)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array$1.get(sources, 0).pos);
+    return ;
+  }
+  
+}
+
+RoleUpgrader_bs.roleUpgrader = roleUpgrader;
+
+var RoleHarvester_bs = {};
+
 var Js_dict$1 = js_dict;
 var Caml_obj = caml_obj;
 var Caml_array = caml_array;
@@ -930,11 +954,17 @@ function roleHarvester(creep) {
 RoleHarvester_bs.roleHarvester = roleHarvester;
 
 var Js_dict = js_dict;
+var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 
 function loop(param) {
   Object.keys(Game.creeps).forEach(function (name) {
-        return RoleHarvester.roleHarvester(Js_dict.get(Game.creeps, name));
+        var creep = Js_dict.get(Game.creeps, name);
+        if (creep.memory.role === "harvester") {
+          return RoleHarvester.roleHarvester(creep);
+        } else {
+          return RoleUpgrader.roleUpgrader(creep);
+        }
       });
   
 }

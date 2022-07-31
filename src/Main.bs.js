@@ -2,11 +2,17 @@
 'use strict';
 
 var Js_dict = require("rescript/lib/js/js_dict.js");
+var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 
 function loop(param) {
   Object.keys(Game.creeps).forEach(function (name) {
-        return RoleHarvester.roleHarvester(Js_dict.get(Game.creeps, name));
+        var creep = Js_dict.get(Game.creeps, name);
+        if (creep.memory.role === "harvester") {
+          return RoleHarvester.roleHarvester(creep);
+        } else {
+          return RoleUpgrader.roleUpgrader(creep);
+        }
       });
   
 }
