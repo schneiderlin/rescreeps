@@ -169,7 +169,7 @@ js_dict.fromList = fromList;
 js_dict.fromArray = fromArray;
 js_dict.map = map;
 
-var RoleUpgrader_bs = {};
+var RoleBuilder_bs = {};
 
 var caml_obj = {};
 
@@ -908,10 +908,19 @@ caml_array.set = set;
 var Caml_obj$1 = caml_obj;
 var Caml_array$1 = caml_array;
 
-function roleUpgrader(creep) {
-  if (creep.store.getUsedCapacity(RESOURCE_ENERGY) !== 0) {
-    if (Caml_obj$1.caml_equal(creep.upgradeController(creep.room.controller), ERR_NOT_IN_RANGE)) {
-      creep.moveTo(creep.room.controller.pos);
+function roleBuilder(creep) {
+  if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.building = false;
+    creep.say("\xf0\x9f\x94\x84 harvest");
+  }
+  if (!creep.memory.building && creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.building = true;
+    creep.say("\xf0\x9f\x9a\xa7 build");
+  }
+  if (creep.memory.building) {
+    var targets = creep.room.find(111);
+    if (targets.length > 0 && Caml_obj$1.caml_equal(creep.build(Caml_array$1.get(targets, 0)), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(Caml_array$1.get(targets, 0).pos);
       return ;
     } else {
       return ;
@@ -925,16 +934,15 @@ function roleUpgrader(creep) {
   
 }
 
-RoleUpgrader_bs.roleUpgrader = roleUpgrader;
+RoleBuilder_bs.roleBuilder = roleBuilder;
 
 var RoleHarvester_bs = {};
 
-var Js_dict$1 = js_dict;
 var Caml_obj = caml_obj;
 var Caml_array = caml_array;
 
 function roleHarvester(creep) {
-  if (creep.store.getFreeCapacity() > 0) {
+  if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
     var sources = creep.room.find(105);
     if (Caml_obj.caml_equal(creep.harvest(Caml_array.get(sources, 0)), ERR_NOT_IN_RANGE)) {
       creep.moveTo(Caml_array.get(sources, 0).pos);
@@ -943,9 +951,18 @@ function roleHarvester(creep) {
       return ;
     }
   }
-  var spawn1 = Js_dict$1.get(Game.spawns, "Spawn1");
-  if (Caml_obj.caml_equal(creep.transfer(spawn1, RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(spawn1.pos);
+  var targets = creep.room.find(107);
+  var filteredTargets = targets.filter(function (structure) {
+        if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_EXTENSION)) {
+          return true;
+        } else if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
+          return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+        } else {
+          return false;
+        }
+      });
+  if (filteredTargets.length > 0 && Caml_obj.caml_equal(creep.transfer(Caml_array.get(filteredTargets, 0), RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array.get(filteredTargets, 0).pos);
     return ;
   }
   
@@ -954,17 +971,24 @@ function roleHarvester(creep) {
 RoleHarvester_bs.roleHarvester = roleHarvester;
 
 var Js_dict = js_dict;
-var RoleUpgrader = RoleUpgrader_bs;
+var RoleBuilder = RoleBuilder_bs;
 var RoleHarvester = RoleHarvester_bs;
 
 function loop(param) {
+  Object.keys(Game.rooms).forEach(function (name) {
+        var room = Js_dict.get(Game.rooms, name);
+        console.log("Room " + name + " has " + String(room.energyAvailable) + " energy");
+        
+      });
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Js_dict.get(Game.creeps, name);
         if (creep.memory.role === "harvester") {
-          return RoleHarvester.roleHarvester(creep);
-        } else {
-          return RoleUpgrader.roleUpgrader(creep);
+          RoleHarvester.roleHarvester(creep);
         }
+        if (creep.memory.role === "builder") {
+          return RoleBuilder.roleBuilder(creep);
+        }
+        
       });
   
 }

@@ -2,17 +2,24 @@
 'use strict';
 
 var Js_dict = require("rescript/lib/js/js_dict.js");
-var RoleUpgrader = require("./RoleUpgrader.bs.js");
+var RoleBuilder = require("./RoleBuilder.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 
 function loop(param) {
+  Object.keys(Game.rooms).forEach(function (name) {
+        var room = Js_dict.get(Game.rooms, name);
+        console.log("Room " + name + " has " + String(room.energyAvailable) + " energy");
+        
+      });
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Js_dict.get(Game.creeps, name);
         if (creep.memory.role === "harvester") {
-          return RoleHarvester.roleHarvester(creep);
-        } else {
-          return RoleUpgrader.roleUpgrader(creep);
+          RoleHarvester.roleHarvester(creep);
         }
+        if (creep.memory.role === "builder") {
+          return RoleBuilder.roleBuilder(creep);
+        }
+        
       });
   
 }

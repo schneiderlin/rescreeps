@@ -78,7 +78,7 @@ type stats = {
   bucket: int,
 }
 
-type memory = {role: string}
+type memory = {role: string, mutable building: bool}
 
 type resource = {pos: roomPosition, amount: int}
 
