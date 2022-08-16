@@ -1666,18 +1666,34 @@ function spawnCreeps(param) {
   var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "harvester";
       });
-  if (harvesters.length >= 2) {
+  if (harvesters.length < 2) {
+    var newName = "Harvester" + String(Game.time);
+    console.log("Spawning new harvester: ", newName);
+    Game.spawns["Spawn1"].spawnCreep([
+          WORK,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "harvester"
+          }
+        });
+  }
+  var upgraders = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "upgrader";
+      });
+  if (upgraders.length >= 1) {
     return ;
   }
-  var newName = "Harvester" + String(Game.time);
-  console.log("Spawning new harvester: ", newName);
+  var newName$1 = "Upgrader" + String(Game.time);
+  console.log("Spawning new upgrader: ", newName$1);
   Game.spawns["Spawn1"].spawnCreep([
         WORK,
         CARRY,
         MOVE
-      ], newName, {
+      ], newName$1, {
         memory: {
-          role: "harvester"
+          role: "upgrader"
         }
       });
   

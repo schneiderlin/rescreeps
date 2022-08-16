@@ -16,6 +16,22 @@ let spawnCreeps = () => {
       ->Js.Dict.unsafeGet("Spawn1")
       ->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
   }
+
+  let upgraders =
+    game.creeps
+    ->Js.Dict.values
+    ->Js.Array2.filter(creep => {
+      creep.memory.role == "upgrader"
+    })
+
+  if upgraders->Js.Array2.length < 1 {
+    let newName = "Upgrader" ++ game.time->Belt.Int.toString
+    Js.log2("Spawning new upgrader: ", newName)
+    let _ =
+      game.spawns
+      ->Js.Dict.unsafeGet("Spawn1")
+      ->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "upgrader"}})
+  }
 }
 
 let towerDefence = () => {
