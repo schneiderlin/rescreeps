@@ -2,22 +2,43 @@
 'use strict';
 
 var Js_dict = require("rescript/lib/js/js_dict.js");
-var RoleBuilder = require("./RoleBuilder.bs.js");
+var Belt_Option = require("rescript/lib/js/belt_Option.js");
+var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 
 function loop(param) {
-  Object.keys(Game.rooms).forEach(function (name) {
-        var room = Js_dict.get(Game.rooms, name);
-        console.log("Room " + name + " has " + String(room.energyAvailable) + " energy");
+  Object.keys(Memory.creeps).forEach(function (name) {
+        if (Belt_Option.isNone(Js_dict.get(Game.creeps, name))) {
+          Js_dict.unsafeDeleteKey(Memory.creeps, name);
+          console.log("Clearing non-existing creep memory:", name);
+          return ;
+        }
         
       });
+  var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "harvester";
+      });
+  console.log("Harvesters: ", harvesters.length);
+  if (harvesters.length < 2) {
+    var newName = "Harvester" + String(Game.time);
+    console.log("Spawning new harvester: ", newName);
+    Game.spawns["Spawn1"].spawnCreep([
+          WORK,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "harvester"
+          }
+        });
+  }
   Object.keys(Game.creeps).forEach(function (name) {
-        var creep = Js_dict.get(Game.creeps, name);
+        var creep = Game.creeps[name];
         if (creep.memory.role === "harvester") {
           RoleHarvester.roleHarvester(creep);
         }
-        if (creep.memory.role === "builder") {
-          return RoleBuilder.roleBuilder(creep);
+        if (creep.memory.role === "upgrader") {
+          return RoleUpgrader.roleUpgrader(creep);
         }
         
       });

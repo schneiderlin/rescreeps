@@ -89,11 +89,11 @@ caml_option.isNested = isNested;
 caml_option.option_get = option_get;
 caml_option.option_unwrap = option_unwrap;
 
-var Caml_option = caml_option;
+var Caml_option$1 = caml_option;
 
 function get$1(dict, k) {
   if ((k in dict)) {
-    return Caml_option.some(dict[k]);
+    return Caml_option$1.some(dict[k]);
   }
   
 }
@@ -150,7 +150,7 @@ function fromArray(entries) {
   return dict;
 }
 
-function map(f, source) {
+function map$1(f, source) {
   var target = {};
   var keys = Object.keys(source);
   var l = keys.length;
@@ -167,9 +167,789 @@ js_dict.entries = entries;
 js_dict.values = values;
 js_dict.fromList = fromList;
 js_dict.fromArray = fromArray;
-js_dict.map = map;
+js_dict.map = map$1;
 
-var RoleBuilder_bs = {};
+var belt_Option = {};
+
+var curry = {};
+
+var caml_array = {};
+
+function sub(x, offset, len) {
+  var result = new Array(len);
+  var j = 0;
+  var i = offset;
+  while(j < len) {
+    result[j] = x[i];
+    j = j + 1 | 0;
+    i = i + 1 | 0;
+  }  return result;
+}
+
+function len(_acc, _l) {
+  while(true) {
+    var l = _l;
+    var acc = _acc;
+    if (!l) {
+      return acc;
+    }
+    _l = l.tl;
+    _acc = l.hd.length + acc | 0;
+    continue ;
+  }}
+
+function fill(arr, _i, _l) {
+  while(true) {
+    var l = _l;
+    var i = _i;
+    if (!l) {
+      return ;
+    }
+    var x = l.hd;
+    var l$1 = x.length;
+    var k = i;
+    var j = 0;
+    while(j < l$1) {
+      arr[k] = x[j];
+      k = k + 1 | 0;
+      j = j + 1 | 0;
+    }    _l = l.tl;
+    _i = k;
+    continue ;
+  }}
+
+function concat(l) {
+  var v = len(0, l);
+  var result = new Array(v);
+  fill(result, 0, l);
+  return result;
+}
+
+function set(xs, index, newval) {
+  if (index < 0 || index >= xs.length) {
+    throw {
+          RE_EXN_ID: "Invalid_argument",
+          _1: "index out of bounds",
+          Error: new Error()
+        };
+  }
+  xs[index] = newval;
+  
+}
+
+function get(xs, index) {
+  if (index < 0 || index >= xs.length) {
+    throw {
+          RE_EXN_ID: "Invalid_argument",
+          _1: "index out of bounds",
+          Error: new Error()
+        };
+  }
+  return xs[index];
+}
+
+function make(len, init) {
+  var b = new Array(len);
+  for(var i = 0; i < len; ++i){
+    b[i] = init;
+  }
+  return b;
+}
+
+function make_float(len) {
+  var b = new Array(len);
+  for(var i = 0; i < len; ++i){
+    b[i] = 0;
+  }
+  return b;
+}
+
+function blit(a1, i1, a2, i2, len) {
+  if (i2 <= i1) {
+    for(var j = 0; j < len; ++j){
+      a2[j + i2 | 0] = a1[j + i1 | 0];
+    }
+    return ;
+  }
+  for(var j$1 = len - 1 | 0; j$1 >= 0; --j$1){
+    a2[j$1 + i2 | 0] = a1[j$1 + i1 | 0];
+  }
+  
+}
+
+function dup(prim) {
+  return prim.slice(0);
+}
+
+caml_array.dup = dup;
+caml_array.sub = sub;
+caml_array.concat = concat;
+caml_array.make = make;
+caml_array.make_float = make_float;
+caml_array.blit = blit;
+caml_array.get = get;
+caml_array.set = set;
+
+var Caml_array$2 = caml_array;
+
+function app(_f, _args) {
+  while(true) {
+    var args = _args;
+    var f = _f;
+    var init_arity = f.length;
+    var arity = init_arity === 0 ? 1 : init_arity;
+    var len = args.length;
+    var d = arity - len | 0;
+    if (d === 0) {
+      return f.apply(null, args);
+    }
+    if (d >= 0) {
+      return (function(f,args){
+      return function (x) {
+        return app(f, args.concat([x]));
+      }
+      }(f,args));
+    }
+    _args = Caml_array$2.sub(args, arity, -d | 0);
+    _f = f.apply(null, Caml_array$2.sub(args, 0, arity));
+    continue ;
+  }}
+
+function _1(o, a0) {
+  var arity = o.length;
+  if (arity === 1) {
+    return o(a0);
+  } else {
+    switch (arity) {
+      case 1 :
+          return o(a0);
+      case 2 :
+          return function (param) {
+            return o(a0, param);
+          };
+      case 3 :
+          return function (param, param$1) {
+            return o(a0, param, param$1);
+          };
+      case 4 :
+          return function (param, param$1, param$2) {
+            return o(a0, param, param$1, param$2);
+          };
+      case 5 :
+          return function (param, param$1, param$2, param$3) {
+            return o(a0, param, param$1, param$2, param$3);
+          };
+      case 6 :
+          return function (param, param$1, param$2, param$3, param$4) {
+            return o(a0, param, param$1, param$2, param$3, param$4);
+          };
+      case 7 :
+          return function (param, param$1, param$2, param$3, param$4, param$5) {
+            return o(a0, param, param$1, param$2, param$3, param$4, param$5);
+          };
+      default:
+        return app(o, [a0]);
+    }
+  }
+}
+
+function __1(o) {
+  var arity = o.length;
+  if (arity === 1) {
+    return o;
+  } else {
+    return function (a0) {
+      return _1(o, a0);
+    };
+  }
+}
+
+function _2(o, a0, a1) {
+  var arity = o.length;
+  if (arity === 2) {
+    return o(a0, a1);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [a1]);
+      case 2 :
+          return o(a0, a1);
+      case 3 :
+          return function (param) {
+            return o(a0, a1, param);
+          };
+      case 4 :
+          return function (param, param$1) {
+            return o(a0, a1, param, param$1);
+          };
+      case 5 :
+          return function (param, param$1, param$2) {
+            return o(a0, a1, param, param$1, param$2);
+          };
+      case 6 :
+          return function (param, param$1, param$2, param$3) {
+            return o(a0, a1, param, param$1, param$2, param$3);
+          };
+      case 7 :
+          return function (param, param$1, param$2, param$3, param$4) {
+            return o(a0, a1, param, param$1, param$2, param$3, param$4);
+          };
+      default:
+        return app(o, [
+                    a0,
+                    a1
+                  ]);
+    }
+  }
+}
+
+function __2(o) {
+  var arity = o.length;
+  if (arity === 2) {
+    return o;
+  } else {
+    return function (a0, a1) {
+      return _2(o, a0, a1);
+    };
+  }
+}
+
+function _3(o, a0, a1, a2) {
+  var arity = o.length;
+  if (arity === 3) {
+    return o(a0, a1, a2);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [
+                      a1,
+                      a2
+                    ]);
+      case 2 :
+          return app(o(a0, a1), [a2]);
+      case 3 :
+          return o(a0, a1, a2);
+      case 4 :
+          return function (param) {
+            return o(a0, a1, a2, param);
+          };
+      case 5 :
+          return function (param, param$1) {
+            return o(a0, a1, a2, param, param$1);
+          };
+      case 6 :
+          return function (param, param$1, param$2) {
+            return o(a0, a1, a2, param, param$1, param$2);
+          };
+      case 7 :
+          return function (param, param$1, param$2, param$3) {
+            return o(a0, a1, a2, param, param$1, param$2, param$3);
+          };
+      default:
+        return app(o, [
+                    a0,
+                    a1,
+                    a2
+                  ]);
+    }
+  }
+}
+
+function __3(o) {
+  var arity = o.length;
+  if (arity === 3) {
+    return o;
+  } else {
+    return function (a0, a1, a2) {
+      return _3(o, a0, a1, a2);
+    };
+  }
+}
+
+function _4(o, a0, a1, a2, a3) {
+  var arity = o.length;
+  if (arity === 4) {
+    return o(a0, a1, a2, a3);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [
+                      a1,
+                      a2,
+                      a3
+                    ]);
+      case 2 :
+          return app(o(a0, a1), [
+                      a2,
+                      a3
+                    ]);
+      case 3 :
+          return app(o(a0, a1, a2), [a3]);
+      case 4 :
+          return o(a0, a1, a2, a3);
+      case 5 :
+          return function (param) {
+            return o(a0, a1, a2, a3, param);
+          };
+      case 6 :
+          return function (param, param$1) {
+            return o(a0, a1, a2, a3, param, param$1);
+          };
+      case 7 :
+          return function (param, param$1, param$2) {
+            return o(a0, a1, a2, a3, param, param$1, param$2);
+          };
+      default:
+        return app(o, [
+                    a0,
+                    a1,
+                    a2,
+                    a3
+                  ]);
+    }
+  }
+}
+
+function __4(o) {
+  var arity = o.length;
+  if (arity === 4) {
+    return o;
+  } else {
+    return function (a0, a1, a2, a3) {
+      return _4(o, a0, a1, a2, a3);
+    };
+  }
+}
+
+function _5(o, a0, a1, a2, a3, a4) {
+  var arity = o.length;
+  if (arity === 5) {
+    return o(a0, a1, a2, a3, a4);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [
+                      a1,
+                      a2,
+                      a3,
+                      a4
+                    ]);
+      case 2 :
+          return app(o(a0, a1), [
+                      a2,
+                      a3,
+                      a4
+                    ]);
+      case 3 :
+          return app(o(a0, a1, a2), [
+                      a3,
+                      a4
+                    ]);
+      case 4 :
+          return app(o(a0, a1, a2, a3), [a4]);
+      case 5 :
+          return o(a0, a1, a2, a3, a4);
+      case 6 :
+          return function (param) {
+            return o(a0, a1, a2, a3, a4, param);
+          };
+      case 7 :
+          return function (param, param$1) {
+            return o(a0, a1, a2, a3, a4, param, param$1);
+          };
+      default:
+        return app(o, [
+                    a0,
+                    a1,
+                    a2,
+                    a3,
+                    a4
+                  ]);
+    }
+  }
+}
+
+function __5(o) {
+  var arity = o.length;
+  if (arity === 5) {
+    return o;
+  } else {
+    return function (a0, a1, a2, a3, a4) {
+      return _5(o, a0, a1, a2, a3, a4);
+    };
+  }
+}
+
+function _6(o, a0, a1, a2, a3, a4, a5) {
+  var arity = o.length;
+  if (arity === 6) {
+    return o(a0, a1, a2, a3, a4, a5);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [
+                      a1,
+                      a2,
+                      a3,
+                      a4,
+                      a5
+                    ]);
+      case 2 :
+          return app(o(a0, a1), [
+                      a2,
+                      a3,
+                      a4,
+                      a5
+                    ]);
+      case 3 :
+          return app(o(a0, a1, a2), [
+                      a3,
+                      a4,
+                      a5
+                    ]);
+      case 4 :
+          return app(o(a0, a1, a2, a3), [
+                      a4,
+                      a5
+                    ]);
+      case 5 :
+          return app(o(a0, a1, a2, a3, a4), [a5]);
+      case 6 :
+          return o(a0, a1, a2, a3, a4, a5);
+      case 7 :
+          return function (param) {
+            return o(a0, a1, a2, a3, a4, a5, param);
+          };
+      default:
+        return app(o, [
+                    a0,
+                    a1,
+                    a2,
+                    a3,
+                    a4,
+                    a5
+                  ]);
+    }
+  }
+}
+
+function __6(o) {
+  var arity = o.length;
+  if (arity === 6) {
+    return o;
+  } else {
+    return function (a0, a1, a2, a3, a4, a5) {
+      return _6(o, a0, a1, a2, a3, a4, a5);
+    };
+  }
+}
+
+function _7(o, a0, a1, a2, a3, a4, a5, a6) {
+  var arity = o.length;
+  if (arity === 7) {
+    return o(a0, a1, a2, a3, a4, a5, a6);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [
+                      a1,
+                      a2,
+                      a3,
+                      a4,
+                      a5,
+                      a6
+                    ]);
+      case 2 :
+          return app(o(a0, a1), [
+                      a2,
+                      a3,
+                      a4,
+                      a5,
+                      a6
+                    ]);
+      case 3 :
+          return app(o(a0, a1, a2), [
+                      a3,
+                      a4,
+                      a5,
+                      a6
+                    ]);
+      case 4 :
+          return app(o(a0, a1, a2, a3), [
+                      a4,
+                      a5,
+                      a6
+                    ]);
+      case 5 :
+          return app(o(a0, a1, a2, a3, a4), [
+                      a5,
+                      a6
+                    ]);
+      case 6 :
+          return app(o(a0, a1, a2, a3, a4, a5), [a6]);
+      case 7 :
+          return o(a0, a1, a2, a3, a4, a5, a6);
+      default:
+        return app(o, [
+                    a0,
+                    a1,
+                    a2,
+                    a3,
+                    a4,
+                    a5,
+                    a6
+                  ]);
+    }
+  }
+}
+
+function __7(o) {
+  var arity = o.length;
+  if (arity === 7) {
+    return o;
+  } else {
+    return function (a0, a1, a2, a3, a4, a5, a6) {
+      return _7(o, a0, a1, a2, a3, a4, a5, a6);
+    };
+  }
+}
+
+function _8(o, a0, a1, a2, a3, a4, a5, a6, a7) {
+  var arity = o.length;
+  if (arity === 8) {
+    return o(a0, a1, a2, a3, a4, a5, a6, a7);
+  } else {
+    switch (arity) {
+      case 1 :
+          return app(o(a0), [
+                      a1,
+                      a2,
+                      a3,
+                      a4,
+                      a5,
+                      a6,
+                      a7
+                    ]);
+      case 2 :
+          return app(o(a0, a1), [
+                      a2,
+                      a3,
+                      a4,
+                      a5,
+                      a6,
+                      a7
+                    ]);
+      case 3 :
+          return app(o(a0, a1, a2), [
+                      a3,
+                      a4,
+                      a5,
+                      a6,
+                      a7
+                    ]);
+      case 4 :
+          return app(o(a0, a1, a2, a3), [
+                      a4,
+                      a5,
+                      a6,
+                      a7
+                    ]);
+      case 5 :
+          return app(o(a0, a1, a2, a3, a4), [
+                      a5,
+                      a6,
+                      a7
+                    ]);
+      case 6 :
+          return app(o(a0, a1, a2, a3, a4, a5), [
+                      a6,
+                      a7
+                    ]);
+      case 7 :
+          return app(o(a0, a1, a2, a3, a4, a5, a6), [a7]);
+      default:
+        return app(o, [
+                    a0,
+                    a1,
+                    a2,
+                    a3,
+                    a4,
+                    a5,
+                    a6,
+                    a7
+                  ]);
+    }
+  }
+}
+
+function __8(o) {
+  var arity = o.length;
+  if (arity === 8) {
+    return o;
+  } else {
+    return function (a0, a1, a2, a3, a4, a5, a6, a7) {
+      return _8(o, a0, a1, a2, a3, a4, a5, a6, a7);
+    };
+  }
+}
+
+curry.app = app;
+curry._1 = _1;
+curry.__1 = __1;
+curry._2 = _2;
+curry.__2 = __2;
+curry._3 = _3;
+curry.__3 = __3;
+curry._4 = _4;
+curry.__4 = __4;
+curry._5 = _5;
+curry.__5 = __5;
+curry._6 = _6;
+curry.__6 = __6;
+curry._7 = _7;
+curry.__7 = __7;
+curry._8 = _8;
+curry.__8 = __8;
+
+var Curry = curry;
+var Caml_option = caml_option;
+
+function keepU(opt, p) {
+  if (opt !== undefined && p(Caml_option.valFromOption(opt))) {
+    return opt;
+  }
+  
+}
+
+function keep(opt, p) {
+  return keepU(opt, Curry.__1(p));
+}
+
+function forEachU(opt, f) {
+  if (opt !== undefined) {
+    return f(Caml_option.valFromOption(opt));
+  }
+  
+}
+
+function forEach(opt, f) {
+  return forEachU(opt, Curry.__1(f));
+}
+
+function getExn(x) {
+  if (x !== undefined) {
+    return Caml_option.valFromOption(x);
+  }
+  throw {
+        RE_EXN_ID: "Not_found",
+        Error: new Error()
+      };
+}
+
+function mapWithDefaultU(opt, $$default, f) {
+  if (opt !== undefined) {
+    return f(Caml_option.valFromOption(opt));
+  } else {
+    return $$default;
+  }
+}
+
+function mapWithDefault(opt, $$default, f) {
+  return mapWithDefaultU(opt, $$default, Curry.__1(f));
+}
+
+function mapU(opt, f) {
+  if (opt !== undefined) {
+    return Caml_option.some(f(Caml_option.valFromOption(opt)));
+  }
+  
+}
+
+function map(opt, f) {
+  return mapU(opt, Curry.__1(f));
+}
+
+function flatMapU(opt, f) {
+  if (opt !== undefined) {
+    return f(Caml_option.valFromOption(opt));
+  }
+  
+}
+
+function flatMap(opt, f) {
+  return flatMapU(opt, Curry.__1(f));
+}
+
+function getWithDefault(opt, $$default) {
+  if (opt !== undefined) {
+    return Caml_option.valFromOption(opt);
+  } else {
+    return $$default;
+  }
+}
+
+function isSome(param) {
+  return param !== undefined;
+}
+
+function isNone(x) {
+  return x === undefined;
+}
+
+function eqU(a, b, f) {
+  if (a !== undefined) {
+    if (b !== undefined) {
+      return f(Caml_option.valFromOption(a), Caml_option.valFromOption(b));
+    } else {
+      return false;
+    }
+  } else {
+    return b === undefined;
+  }
+}
+
+function eq(a, b, f) {
+  return eqU(a, b, Curry.__2(f));
+}
+
+function cmpU(a, b, f) {
+  if (a !== undefined) {
+    if (b !== undefined) {
+      return f(Caml_option.valFromOption(a), Caml_option.valFromOption(b));
+    } else {
+      return 1;
+    }
+  } else if (b !== undefined) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+function cmp(a, b, f) {
+  return cmpU(a, b, Curry.__2(f));
+}
+
+belt_Option.keepU = keepU;
+belt_Option.keep = keep;
+belt_Option.forEachU = forEachU;
+belt_Option.forEach = forEach;
+belt_Option.getExn = getExn;
+belt_Option.mapWithDefaultU = mapWithDefaultU;
+belt_Option.mapWithDefault = mapWithDefault;
+belt_Option.mapU = mapU;
+belt_Option.map = map;
+belt_Option.flatMapU = flatMapU;
+belt_Option.flatMap = flatMap;
+belt_Option.getWithDefault = getWithDefault;
+belt_Option.isSome = isSome;
+belt_Option.isNone = isNone;
+belt_Option.eqU = eqU;
+belt_Option.eq = eq;
+belt_Option.cmpU = cmpU;
+belt_Option.cmp = cmp;
+
+var RoleUpgrader_bs = {};
 
 var caml_obj = {};
 
@@ -788,139 +1568,13 @@ caml_obj.caml_lessequal = caml_lessequal;
 caml_obj.caml_min = caml_min;
 caml_obj.caml_max = caml_max;
 
-var caml_array = {};
-
-function sub(x, offset, len) {
-  var result = new Array(len);
-  var j = 0;
-  var i = offset;
-  while(j < len) {
-    result[j] = x[i];
-    j = j + 1 | 0;
-    i = i + 1 | 0;
-  }  return result;
-}
-
-function len(_acc, _l) {
-  while(true) {
-    var l = _l;
-    var acc = _acc;
-    if (!l) {
-      return acc;
-    }
-    _l = l.tl;
-    _acc = l.hd.length + acc | 0;
-    continue ;
-  }}
-
-function fill(arr, _i, _l) {
-  while(true) {
-    var l = _l;
-    var i = _i;
-    if (!l) {
-      return ;
-    }
-    var x = l.hd;
-    var l$1 = x.length;
-    var k = i;
-    var j = 0;
-    while(j < l$1) {
-      arr[k] = x[j];
-      k = k + 1 | 0;
-      j = j + 1 | 0;
-    }    _l = l.tl;
-    _i = k;
-    continue ;
-  }}
-
-function concat(l) {
-  var v = len(0, l);
-  var result = new Array(v);
-  fill(result, 0, l);
-  return result;
-}
-
-function set(xs, index, newval) {
-  if (index < 0 || index >= xs.length) {
-    throw {
-          RE_EXN_ID: "Invalid_argument",
-          _1: "index out of bounds",
-          Error: new Error()
-        };
-  }
-  xs[index] = newval;
-  
-}
-
-function get(xs, index) {
-  if (index < 0 || index >= xs.length) {
-    throw {
-          RE_EXN_ID: "Invalid_argument",
-          _1: "index out of bounds",
-          Error: new Error()
-        };
-  }
-  return xs[index];
-}
-
-function make(len, init) {
-  var b = new Array(len);
-  for(var i = 0; i < len; ++i){
-    b[i] = init;
-  }
-  return b;
-}
-
-function make_float(len) {
-  var b = new Array(len);
-  for(var i = 0; i < len; ++i){
-    b[i] = 0;
-  }
-  return b;
-}
-
-function blit(a1, i1, a2, i2, len) {
-  if (i2 <= i1) {
-    for(var j = 0; j < len; ++j){
-      a2[j + i2 | 0] = a1[j + i1 | 0];
-    }
-    return ;
-  }
-  for(var j$1 = len - 1 | 0; j$1 >= 0; --j$1){
-    a2[j$1 + i2 | 0] = a1[j$1 + i1 | 0];
-  }
-  
-}
-
-function dup(prim) {
-  return prim.slice(0);
-}
-
-caml_array.dup = dup;
-caml_array.sub = sub;
-caml_array.concat = concat;
-caml_array.make = make;
-caml_array.make_float = make_float;
-caml_array.blit = blit;
-caml_array.get = get;
-caml_array.set = set;
-
 var Caml_obj$1 = caml_obj;
 var Caml_array$1 = caml_array;
 
-function roleBuilder(creep) {
-  if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
-    creep.memory.building = false;
-    creep.say("\xf0\x9f\x94\x84 harvest");
-  }
-  if (!creep.memory.building && creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
-    creep.memory.building = true;
-    creep.say("\xf0\x9f\x9a\xa7 build");
-  }
-  if (creep.memory.building) {
-    var targets = creep.room.find(111);
-    if (targets.length > 0 && Caml_obj$1.caml_equal(creep.build(Caml_array$1.get(targets, 0)), ERR_NOT_IN_RANGE)) {
-      creep.moveTo(Caml_array$1.get(targets, 0).pos);
+function roleUpgrader(creep) {
+  if (creep.store.getUsedCapacity(RESOURCE_ENERGY) !== 0) {
+    if (Caml_obj$1.caml_equal(creep.upgradeController(creep.room.controller), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(creep.room.controller.pos);
       return ;
     } else {
       return ;
@@ -934,7 +1588,7 @@ function roleBuilder(creep) {
   
 }
 
-RoleBuilder_bs.roleBuilder = roleBuilder;
+RoleUpgrader_bs.roleUpgrader = roleUpgrader;
 
 var RoleHarvester_bs = {};
 
@@ -971,22 +1625,43 @@ function roleHarvester(creep) {
 RoleHarvester_bs.roleHarvester = roleHarvester;
 
 var Js_dict = js_dict;
-var RoleBuilder = RoleBuilder_bs;
+var Belt_Option = belt_Option;
+var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 
 function loop(param) {
-  Object.keys(Game.rooms).forEach(function (name) {
-        var room = Js_dict.get(Game.rooms, name);
-        console.log("Room " + name + " has " + String(room.energyAvailable) + " energy");
+  Object.keys(Memory.creeps).forEach(function (name) {
+        if (Belt_Option.isNone(Js_dict.get(Game.creeps, name))) {
+          Js_dict.unsafeDeleteKey(Memory.creeps, name);
+          console.log("Clearing non-existing creep memory:", name);
+          return ;
+        }
         
       });
+  var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "harvester";
+      });
+  console.log("Harvesters: ", harvesters.length);
+  if (harvesters.length < 2) {
+    var newName = "Harvester" + String(Game.time);
+    console.log("Spawning new harvester: ", newName);
+    Game.spawns["Spawn1"].spawnCreep([
+          WORK,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "harvester"
+          }
+        });
+  }
   Object.keys(Game.creeps).forEach(function (name) {
-        var creep = Js_dict.get(Game.creeps, name);
+        var creep = Game.creeps[name];
         if (creep.memory.role === "harvester") {
           RoleHarvester.roleHarvester(creep);
         }
-        if (creep.memory.role === "builder") {
-          return RoleBuilder.roleBuilder(creep);
+        if (creep.memory.role === "upgrader") {
+          return RoleUpgrader.roleUpgrader(creep);
         }
         
       });

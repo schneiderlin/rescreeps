@@ -78,7 +78,7 @@ type stats = {
   bucket: int,
 }
 
-type memory = {role: string, mutable building: bool}
+type memory = {creeps: Js.Dict.t<string>, role: string, mutable building: bool}
 
 type resource = {pos: roomPosition, amount: int}
 
@@ -219,14 +219,16 @@ module Private = {
 external findClosestByPathCS: (roomPosition, array<constructionSite>) => option<constructionSite> =
   "findClosestByPath"
 @send @return(nullable)
-external findClosestByPathSource: (roomPosition, array<source>) => option<source> = "findClosestByPath"
+external findClosestByPathSource: (roomPosition, array<source>) => option<source> =
+  "findClosestByPath"
 @send @return(nullable)
 external findClosestByPathCreep: (roomPosition, array<creep>) => option<creep> = "findClosestByPath"
 @send @return(nullable)
 external findClosestByPathStructure: (roomPosition, array<structure>) => option<structure> =
   "findClosestByPath"
 @send @return(nullable)
-external findClosestByPathResource: (roomPosition, array<resource>) => option<resource> = "findClosestByPath"
+external findClosestByPathResource: (roomPosition, array<resource>) => option<resource> =
+  "findClosestByPath"
 let findClosestByPath = (pos, array: array<StructureOrResource.t>) =>
   Private.findClosestByPath(pos, array)->Belt.Option.map(Private.classify)
 
