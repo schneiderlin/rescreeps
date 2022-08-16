@@ -16,9 +16,7 @@ function roleHarvester(creep) {
   }
   var targets = creep.room.find(107);
   var filteredTargets = targets.filter(function (structure) {
-        if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_EXTENSION)) {
-          return true;
-        } else if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
+        if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_EXTENSION) || Caml_obj.caml_equal(structure.structureType, STRUCTURE_TOWER) || Caml_obj.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
           return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
         } else {
           return false;

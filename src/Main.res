@@ -1,30 +1,24 @@
 open Binding
 
 let loop = () => {
-  memory.creeps
-  ->Js.Dict.keys
-  ->Js.Array2.forEach(name => {
-    if game.creeps->Js.Dict.get(name)->Belt.Option.isNone {
-      Js.Dict.unsafeDeleteKey(. memory.creeps, name)
-      Js.log2("Clearing non-existing creep memory:", name)
-    }
-  })
+  let towerOpt = game->getTowerById("ad88e3fc2859f93aa703b852")
+  if towerOpt->Belt.Option.isSome {
+    let tower = towerOpt->Belt.Option.getUnsafe
 
-  let harvesters =
-    game.creeps
-    ->Js.Dict.values
-    ->Js.Array2.filter(creep => {
-      creep.memory.role == "harvester"
+    // 修墙
+    let closestDamagedStructure = tower.pos->findClosestStructureByRangeOpt({
+      "filter": (structure: structure) => structure["hits"] < structure["hitsMax"],
     })
-  Js.log2("Harvesters: ", harvesters->Js.Array2.length)
+    Js.log(closestDamagedStructure)
+    if closestDamagedStructure->Belt.Option.isSome {
+      let _ = tower->repairT(closestDamagedStructure->Belt.Option.getUnsafe)
+    }
 
-  if harvesters->Js.Array2.length < 2 {
-    let newName = "Harvester" ++ game.time->Belt.Int.toString
-    Js.log2("Spawning new harvester: ", newName)
-    let _ =
-      game.spawns
-      ->Js.Dict.unsafeGet("Spawn1")
-      ->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
+    // 攻击
+    let closestHostile = tower.pos->findClosestHostileCreepsByRange
+    if closestHostile->Belt.Option.isSome {
+      let _ = tower->attackT(closestHostile->Belt.Option.getUnsafe)
+    }
   }
 
   game.creeps
@@ -36,6 +30,9 @@ let loop = () => {
     }
     if creep.memory.role == "upgrader" {
       RoleUpgrader.roleUpgrader(creep)
+    }
+    if creep.memory.role == "builder" {
+      RoleBuilder.roleBuilder(creep)
     }
   })
 }

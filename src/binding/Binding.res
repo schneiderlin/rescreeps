@@ -232,6 +232,24 @@ external findClosestByPathResource: (roomPosition, array<resource>) => option<re
 let findClosestByPath = (pos, array: array<StructureOrResource.t>) =>
   Private.findClosestByPath(pos, array)->Belt.Option.map(Private.classify)
 
+@send @return(nullable)
+external findClosestByRangeStructure: (roomPosition, array<structure>) => option<structure> =
+  "findClosestByRange"
+
+@send @return(nullable)
+external findClosestStructureByRange: (roomPosition, @as(107) _) => option<structure> =
+  "findClosestByRange"
+@send @return(nullable)
+external findClosestStructureByRangeOpt: (roomPosition, @as(107) _, 'a) => option<structure> =
+  "findClosestByRange"
+
+@send @return(nullable)
+external findClosestHostileCreepsByRange: (roomPosition, @as(103) _) => option<creep> =
+  "findClosestByRange"
+@send @return(nullable)
+external findClosestHostileCreepsByRangeOpt: (roomPosition, @as(103) _, 'a) => option<creep> =
+  "findClosestByRange"
+
 // spawn functions
 @send external spawnCreep: (spawn, array<bodyPart>, string) => actionErr = "spawnCreep"
 @send external spawnCreepOpts: (spawn, array<bodyPart>, string, 'a) => actionErr = "spawnCreep"

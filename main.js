@@ -4,171 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var Main_bs = {};
 
-var js_dict = {};
-
-var caml_option = {};
-
-function isNested(x) {
-  return x.BS_PRIVATE_NESTED_SOME_NONE !== undefined;
-}
-
-function some(x) {
-  if (x === undefined) {
-    return {
-            BS_PRIVATE_NESTED_SOME_NONE: 0
-          };
-  } else if (x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-    return {
-            BS_PRIVATE_NESTED_SOME_NONE: x.BS_PRIVATE_NESTED_SOME_NONE + 1 | 0
-          };
-  } else {
-    return x;
-  }
-}
-
-function nullable_to_opt(x) {
-  if (x == null) {
-    return ;
-  } else {
-    return some(x);
-  }
-}
-
-function undefined_to_opt(x) {
-  if (x === undefined) {
-    return ;
-  } else {
-    return some(x);
-  }
-}
-
-function null_to_opt(x) {
-  if (x === null) {
-    return ;
-  } else {
-    return some(x);
-  }
-}
-
-function valFromOption(x) {
-  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined)) {
-    return x;
-  }
-  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
-  if (depth === 0) {
-    return ;
-  } else {
-    return {
-            BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
-          };
-  }
-}
-
-function option_get(x) {
-  if (x === undefined) {
-    return ;
-  } else {
-    return valFromOption(x);
-  }
-}
-
-function option_unwrap(x) {
-  if (x !== undefined) {
-    return x.VAL;
-  } else {
-    return x;
-  }
-}
-
-caml_option.nullable_to_opt = nullable_to_opt;
-caml_option.undefined_to_opt = undefined_to_opt;
-caml_option.null_to_opt = null_to_opt;
-caml_option.valFromOption = valFromOption;
-caml_option.some = some;
-caml_option.isNested = isNested;
-caml_option.option_get = option_get;
-caml_option.option_unwrap = option_unwrap;
-
-var Caml_option$1 = caml_option;
-
-function get$1(dict, k) {
-  if ((k in dict)) {
-    return Caml_option$1.some(dict[k]);
-  }
-  
-}
-
-var unsafeDeleteKey = (function (dict,key){
-      delete dict[key];
-     });
-
-function entries(dict) {
-  var keys = Object.keys(dict);
-  var l = keys.length;
-  var values = new Array(l);
-  for(var i = 0; i < l; ++i){
-    var key = keys[i];
-    values[i] = [
-      key,
-      dict[key]
-    ];
-  }
-  return values;
-}
-
-function values(dict) {
-  var keys = Object.keys(dict);
-  var l = keys.length;
-  var values$1 = new Array(l);
-  for(var i = 0; i < l; ++i){
-    values$1[i] = dict[keys[i]];
-  }
-  return values$1;
-}
-
-function fromList(entries) {
-  var dict = {};
-  var _param = entries;
-  while(true) {
-    var param = _param;
-    if (!param) {
-      return dict;
-    }
-    var match = param.hd;
-    dict[match[0]] = match[1];
-    _param = param.tl;
-    continue ;
-  }}
-
-function fromArray(entries) {
-  var dict = {};
-  var l = entries.length;
-  for(var i = 0; i < l; ++i){
-    var match = entries[i];
-    dict[match[0]] = match[1];
-  }
-  return dict;
-}
-
-function map$1(f, source) {
-  var target = {};
-  var keys = Object.keys(source);
-  var l = keys.length;
-  for(var i = 0; i < l; ++i){
-    var key = keys[i];
-    target[key] = f(source[key]);
-  }
-  return target;
-}
-
-js_dict.get = get$1;
-js_dict.unsafeDeleteKey = unsafeDeleteKey;
-js_dict.entries = entries;
-js_dict.values = values;
-js_dict.fromList = fromList;
-js_dict.fromArray = fromArray;
-js_dict.map = map$1;
-
 var belt_Option = {};
 
 var curry = {};
@@ -290,7 +125,7 @@ caml_array.blit = blit;
 caml_array.get = get;
 caml_array.set = set;
 
-var Caml_array$2 = caml_array;
+var Caml_array$3 = caml_array;
 
 function app(_f, _args) {
   while(true) {
@@ -310,8 +145,8 @@ function app(_f, _args) {
       }
       }(f,args));
     }
-    _args = Caml_array$2.sub(args, arity, -d | 0);
-    _f = f.apply(null, Caml_array$2.sub(args, 0, arity));
+    _args = Caml_array$3.sub(args, arity, -d | 0);
+    _f = f.apply(null, Caml_array$3.sub(args, 0, arity));
     continue ;
   }}
 
@@ -811,11 +646,94 @@ curry.__7 = __7;
 curry._8 = _8;
 curry.__8 = __8;
 
+var caml_option = {};
+
+function isNested(x) {
+  return x.BS_PRIVATE_NESTED_SOME_NONE !== undefined;
+}
+
+function some(x) {
+  if (x === undefined) {
+    return {
+            BS_PRIVATE_NESTED_SOME_NONE: 0
+          };
+  } else if (x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+    return {
+            BS_PRIVATE_NESTED_SOME_NONE: x.BS_PRIVATE_NESTED_SOME_NONE + 1 | 0
+          };
+  } else {
+    return x;
+  }
+}
+
+function nullable_to_opt(x) {
+  if (x == null) {
+    return ;
+  } else {
+    return some(x);
+  }
+}
+
+function undefined_to_opt(x) {
+  if (x === undefined) {
+    return ;
+  } else {
+    return some(x);
+  }
+}
+
+function null_to_opt(x) {
+  if (x === null) {
+    return ;
+  } else {
+    return some(x);
+  }
+}
+
+function valFromOption(x) {
+  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined)) {
+    return x;
+  }
+  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
+  if (depth === 0) {
+    return ;
+  } else {
+    return {
+            BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
+          };
+  }
+}
+
+function option_get(x) {
+  if (x === undefined) {
+    return ;
+  } else {
+    return valFromOption(x);
+  }
+}
+
+function option_unwrap(x) {
+  if (x !== undefined) {
+    return x.VAL;
+  } else {
+    return x;
+  }
+}
+
+caml_option.nullable_to_opt = nullable_to_opt;
+caml_option.undefined_to_opt = undefined_to_opt;
+caml_option.null_to_opt = null_to_opt;
+caml_option.valFromOption = valFromOption;
+caml_option.some = some;
+caml_option.isNested = isNested;
+caml_option.option_get = option_get;
+caml_option.option_unwrap = option_unwrap;
+
 var Curry = curry;
-var Caml_option = caml_option;
+var Caml_option$1 = caml_option;
 
 function keepU(opt, p) {
-  if (opt !== undefined && p(Caml_option.valFromOption(opt))) {
+  if (opt !== undefined && p(Caml_option$1.valFromOption(opt))) {
     return opt;
   }
   
@@ -827,7 +745,7 @@ function keep(opt, p) {
 
 function forEachU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option.valFromOption(opt));
+    return f(Caml_option$1.valFromOption(opt));
   }
   
 }
@@ -838,7 +756,7 @@ function forEach(opt, f) {
 
 function getExn(x) {
   if (x !== undefined) {
-    return Caml_option.valFromOption(x);
+    return Caml_option$1.valFromOption(x);
   }
   throw {
         RE_EXN_ID: "Not_found",
@@ -848,7 +766,7 @@ function getExn(x) {
 
 function mapWithDefaultU(opt, $$default, f) {
   if (opt !== undefined) {
-    return f(Caml_option.valFromOption(opt));
+    return f(Caml_option$1.valFromOption(opt));
   } else {
     return $$default;
   }
@@ -860,7 +778,7 @@ function mapWithDefault(opt, $$default, f) {
 
 function mapU(opt, f) {
   if (opt !== undefined) {
-    return Caml_option.some(f(Caml_option.valFromOption(opt)));
+    return Caml_option$1.some(f(Caml_option$1.valFromOption(opt)));
   }
   
 }
@@ -871,7 +789,7 @@ function map(opt, f) {
 
 function flatMapU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option.valFromOption(opt));
+    return f(Caml_option$1.valFromOption(opt));
   }
   
 }
@@ -882,7 +800,7 @@ function flatMap(opt, f) {
 
 function getWithDefault(opt, $$default) {
   if (opt !== undefined) {
-    return Caml_option.valFromOption(opt);
+    return Caml_option$1.valFromOption(opt);
   } else {
     return $$default;
   }
@@ -899,7 +817,7 @@ function isNone(x) {
 function eqU(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option.valFromOption(a), Caml_option.valFromOption(b));
+      return f(Caml_option$1.valFromOption(a), Caml_option$1.valFromOption(b));
     } else {
       return false;
     }
@@ -915,7 +833,7 @@ function eq(a, b, f) {
 function cmpU(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option.valFromOption(a), Caml_option.valFromOption(b));
+      return f(Caml_option$1.valFromOption(a), Caml_option$1.valFromOption(b));
     } else {
       return 1;
     }
@@ -949,7 +867,7 @@ belt_Option.eq = eq;
 belt_Option.cmpU = cmpU;
 belt_Option.cmp = cmp;
 
-var RoleUpgrader_bs = {};
+var RoleBuilder_bs = {};
 
 var caml_obj = {};
 
@@ -1568,6 +1486,39 @@ caml_obj.caml_lessequal = caml_lessequal;
 caml_obj.caml_min = caml_min;
 caml_obj.caml_max = caml_max;
 
+var Caml_obj$2 = caml_obj;
+var Caml_array$2 = caml_array;
+
+function roleBuilder(creep) {
+  if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.building = false;
+    creep.say("\xf0\x9f\x94\x84 harvest");
+  }
+  if (!creep.memory.building && creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.building = true;
+    creep.say("\xf0\x9f\x9a\xa7 build");
+  }
+  if (creep.memory.building) {
+    var targets = creep.room.find(111);
+    if (targets.length > 0 && Caml_obj$2.caml_equal(creep.build(Caml_array$2.get(targets, 0)), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(Caml_array$2.get(targets, 0).pos);
+      return ;
+    } else {
+      return ;
+    }
+  }
+  var sources = creep.room.find(105);
+  if (Caml_obj$2.caml_equal(creep.harvest(Caml_array$2.get(sources, 0)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array$2.get(sources, 0).pos);
+    return ;
+  }
+  
+}
+
+RoleBuilder_bs.roleBuilder = roleBuilder;
+
+var RoleUpgrader_bs = {};
+
 var Caml_obj$1 = caml_obj;
 var Caml_array$1 = caml_array;
 
@@ -1607,9 +1558,7 @@ function roleHarvester(creep) {
   }
   var targets = creep.room.find(107);
   var filteredTargets = targets.filter(function (structure) {
-        if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_EXTENSION)) {
-          return true;
-        } else if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
+        if (Caml_obj.caml_equal(structure.structureType, STRUCTURE_EXTENSION) || Caml_obj.caml_equal(structure.structureType, STRUCTURE_TOWER) || Caml_obj.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
           return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
         } else {
           return false;
@@ -1624,36 +1573,32 @@ function roleHarvester(creep) {
 
 RoleHarvester_bs.roleHarvester = roleHarvester;
 
-var Js_dict = js_dict;
 var Belt_Option = belt_Option;
+var Caml_option = caml_option;
+var RoleBuilder = RoleBuilder_bs;
 var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 
 function loop(param) {
-  Object.keys(Memory.creeps).forEach(function (name) {
-        if (Belt_Option.isNone(Js_dict.get(Game.creeps, name))) {
-          Js_dict.unsafeDeleteKey(Memory.creeps, name);
-          console.log("Clearing non-existing creep memory:", name);
-          return ;
-        }
-        
-      });
-  var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
-        return creep.memory.role === "harvester";
-      });
-  console.log("Harvesters: ", harvesters.length);
-  if (harvesters.length < 2) {
-    var newName = "Harvester" + String(Game.time);
-    console.log("Spawning new harvester: ", newName);
-    Game.spawns["Spawn1"].spawnCreep([
-          WORK,
-          CARRY,
-          MOVE
-        ], newName, {
-          memory: {
-            role: "harvester"
-          }
+  var towerOpt = Game.getObjectById("ad88e3fc2859f93aa703b852");
+  var towerOpt$1 = (towerOpt == null) ? undefined : Caml_option.some(towerOpt);
+  if (Belt_Option.isSome(towerOpt$1)) {
+    var closestDamagedStructure = towerOpt$1.pos.findClosestByRange(107, {
+          filter: (function (structure) {
+              return structure.hits < structure.hitsMax;
+            })
         });
+    var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
+    console.log(closestDamagedStructure$1);
+    if (Belt_Option.isSome(closestDamagedStructure$1)) {
+      towerOpt$1.repair(closestDamagedStructure$1);
+    }
+    var closestHostile = towerOpt$1.pos.findClosestByRange(103);
+    var closestHostile$1 = (closestHostile == null) ? undefined : Caml_option.some(closestHostile);
+    if (Belt_Option.isSome(closestHostile$1)) {
+      towerOpt$1.attack(closestHostile$1);
+    }
+    
   }
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
@@ -1661,7 +1606,10 @@ function loop(param) {
           RoleHarvester.roleHarvester(creep);
         }
         if (creep.memory.role === "upgrader") {
-          return RoleUpgrader.roleUpgrader(creep);
+          RoleUpgrader.roleUpgrader(creep);
+        }
+        if (creep.memory.role === "builder") {
+          return RoleBuilder.roleBuilder(creep);
         }
         
       });
