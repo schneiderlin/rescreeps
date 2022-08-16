@@ -1,6 +1,24 @@
 open Binding
 
-let loop = () => {
+let spawnCreeps = () => {
+  let harvesters =
+    game.creeps
+    ->Js.Dict.values
+    ->Js.Array2.filter(creep => {
+      creep.memory.role == "harvester"
+    })
+
+  if harvesters->Js.Array2.length < 2 {
+    let newName = "Harvester" ++ game.time->Belt.Int.toString
+    Js.log2("Spawning new harvester: ", newName)
+    let _ =
+      game.spawns
+      ->Js.Dict.unsafeGet("Spawn1")
+      ->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
+  }
+}
+
+let towerDefence = () => {
   let towerOpt = game->getTowerById("ad88e3fc2859f93aa703b852")
   if towerOpt->Belt.Option.isSome {
     let tower = towerOpt->Belt.Option.getUnsafe
@@ -20,7 +38,9 @@ let loop = () => {
       let _ = tower->attackT(closestHostile->Belt.Option.getUnsafe)
     }
   }
+}
 
+let dispatchTask = () => {
   game.creeps
   ->Js.Dict.keys
   ->Js.Array2.forEach(name => {
@@ -35,4 +55,10 @@ let loop = () => {
       RoleBuilder.roleBuilder(creep)
     }
   })
+}
+
+let loop = () => {
+  spawnCreeps()
+  towerDefence()
+  dispatchTask()
 }

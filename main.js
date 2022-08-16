@@ -4,6 +4,171 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var Main_bs = {};
 
+var js_dict = {};
+
+var caml_option = {};
+
+function isNested(x) {
+  return x.BS_PRIVATE_NESTED_SOME_NONE !== undefined;
+}
+
+function some(x) {
+  if (x === undefined) {
+    return {
+            BS_PRIVATE_NESTED_SOME_NONE: 0
+          };
+  } else if (x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+    return {
+            BS_PRIVATE_NESTED_SOME_NONE: x.BS_PRIVATE_NESTED_SOME_NONE + 1 | 0
+          };
+  } else {
+    return x;
+  }
+}
+
+function nullable_to_opt(x) {
+  if (x == null) {
+    return ;
+  } else {
+    return some(x);
+  }
+}
+
+function undefined_to_opt(x) {
+  if (x === undefined) {
+    return ;
+  } else {
+    return some(x);
+  }
+}
+
+function null_to_opt(x) {
+  if (x === null) {
+    return ;
+  } else {
+    return some(x);
+  }
+}
+
+function valFromOption(x) {
+  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined)) {
+    return x;
+  }
+  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
+  if (depth === 0) {
+    return ;
+  } else {
+    return {
+            BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
+          };
+  }
+}
+
+function option_get(x) {
+  if (x === undefined) {
+    return ;
+  } else {
+    return valFromOption(x);
+  }
+}
+
+function option_unwrap(x) {
+  if (x !== undefined) {
+    return x.VAL;
+  } else {
+    return x;
+  }
+}
+
+caml_option.nullable_to_opt = nullable_to_opt;
+caml_option.undefined_to_opt = undefined_to_opt;
+caml_option.null_to_opt = null_to_opt;
+caml_option.valFromOption = valFromOption;
+caml_option.some = some;
+caml_option.isNested = isNested;
+caml_option.option_get = option_get;
+caml_option.option_unwrap = option_unwrap;
+
+var Caml_option$2 = caml_option;
+
+function get$1(dict, k) {
+  if ((k in dict)) {
+    return Caml_option$2.some(dict[k]);
+  }
+  
+}
+
+var unsafeDeleteKey = (function (dict,key){
+      delete dict[key];
+     });
+
+function entries(dict) {
+  var keys = Object.keys(dict);
+  var l = keys.length;
+  var values = new Array(l);
+  for(var i = 0; i < l; ++i){
+    var key = keys[i];
+    values[i] = [
+      key,
+      dict[key]
+    ];
+  }
+  return values;
+}
+
+function values(dict) {
+  var keys = Object.keys(dict);
+  var l = keys.length;
+  var values$1 = new Array(l);
+  for(var i = 0; i < l; ++i){
+    values$1[i] = dict[keys[i]];
+  }
+  return values$1;
+}
+
+function fromList(entries) {
+  var dict = {};
+  var _param = entries;
+  while(true) {
+    var param = _param;
+    if (!param) {
+      return dict;
+    }
+    var match = param.hd;
+    dict[match[0]] = match[1];
+    _param = param.tl;
+    continue ;
+  }}
+
+function fromArray(entries) {
+  var dict = {};
+  var l = entries.length;
+  for(var i = 0; i < l; ++i){
+    var match = entries[i];
+    dict[match[0]] = match[1];
+  }
+  return dict;
+}
+
+function map$1(f, source) {
+  var target = {};
+  var keys = Object.keys(source);
+  var l = keys.length;
+  for(var i = 0; i < l; ++i){
+    var key = keys[i];
+    target[key] = f(source[key]);
+  }
+  return target;
+}
+
+js_dict.get = get$1;
+js_dict.unsafeDeleteKey = unsafeDeleteKey;
+js_dict.entries = entries;
+js_dict.values = values;
+js_dict.fromList = fromList;
+js_dict.fromArray = fromArray;
+js_dict.map = map$1;
+
 var belt_Option = {};
 
 var curry = {};
@@ -645,89 +810,6 @@ curry._7 = _7;
 curry.__7 = __7;
 curry._8 = _8;
 curry.__8 = __8;
-
-var caml_option = {};
-
-function isNested(x) {
-  return x.BS_PRIVATE_NESTED_SOME_NONE !== undefined;
-}
-
-function some(x) {
-  if (x === undefined) {
-    return {
-            BS_PRIVATE_NESTED_SOME_NONE: 0
-          };
-  } else if (x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-    return {
-            BS_PRIVATE_NESTED_SOME_NONE: x.BS_PRIVATE_NESTED_SOME_NONE + 1 | 0
-          };
-  } else {
-    return x;
-  }
-}
-
-function nullable_to_opt(x) {
-  if (x == null) {
-    return ;
-  } else {
-    return some(x);
-  }
-}
-
-function undefined_to_opt(x) {
-  if (x === undefined) {
-    return ;
-  } else {
-    return some(x);
-  }
-}
-
-function null_to_opt(x) {
-  if (x === null) {
-    return ;
-  } else {
-    return some(x);
-  }
-}
-
-function valFromOption(x) {
-  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined)) {
-    return x;
-  }
-  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
-  if (depth === 0) {
-    return ;
-  } else {
-    return {
-            BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
-          };
-  }
-}
-
-function option_get(x) {
-  if (x === undefined) {
-    return ;
-  } else {
-    return valFromOption(x);
-  }
-}
-
-function option_unwrap(x) {
-  if (x !== undefined) {
-    return x.VAL;
-  } else {
-    return x;
-  }
-}
-
-caml_option.nullable_to_opt = nullable_to_opt;
-caml_option.undefined_to_opt = undefined_to_opt;
-caml_option.null_to_opt = null_to_opt;
-caml_option.valFromOption = valFromOption;
-caml_option.some = some;
-caml_option.isNested = isNested;
-caml_option.option_get = option_get;
-caml_option.option_unwrap = option_unwrap;
 
 var Curry = curry;
 var Caml_option$1 = caml_option;
@@ -1573,33 +1655,60 @@ function roleHarvester(creep) {
 
 RoleHarvester_bs.roleHarvester = roleHarvester;
 
+var Js_dict = js_dict;
 var Belt_Option = belt_Option;
 var Caml_option = caml_option;
 var RoleBuilder = RoleBuilder_bs;
 var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 
-function loop(param) {
+function spawnCreeps(param) {
+  var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "harvester";
+      });
+  if (harvesters.length >= 2) {
+    return ;
+  }
+  var newName = "Harvester" + String(Game.time);
+  console.log("Spawning new harvester: ", newName);
+  Game.spawns["Spawn1"].spawnCreep([
+        WORK,
+        CARRY,
+        MOVE
+      ], newName, {
+        memory: {
+          role: "harvester"
+        }
+      });
+  
+}
+
+function towerDefence(param) {
   var towerOpt = Game.getObjectById("ad88e3fc2859f93aa703b852");
   var towerOpt$1 = (towerOpt == null) ? undefined : Caml_option.some(towerOpt);
-  if (Belt_Option.isSome(towerOpt$1)) {
-    var closestDamagedStructure = towerOpt$1.pos.findClosestByRange(107, {
-          filter: (function (structure) {
-              return structure.hits < structure.hitsMax;
-            })
-        });
-    var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
-    console.log(closestDamagedStructure$1);
-    if (Belt_Option.isSome(closestDamagedStructure$1)) {
-      towerOpt$1.repair(closestDamagedStructure$1);
-    }
-    var closestHostile = towerOpt$1.pos.findClosestByRange(103);
-    var closestHostile$1 = (closestHostile == null) ? undefined : Caml_option.some(closestHostile);
-    if (Belt_Option.isSome(closestHostile$1)) {
-      towerOpt$1.attack(closestHostile$1);
-    }
-    
+  if (!Belt_Option.isSome(towerOpt$1)) {
+    return ;
   }
+  var closestDamagedStructure = towerOpt$1.pos.findClosestByRange(107, {
+        filter: (function (structure) {
+            return structure.hits < structure.hitsMax;
+          })
+      });
+  var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
+  console.log(closestDamagedStructure$1);
+  if (Belt_Option.isSome(closestDamagedStructure$1)) {
+    towerOpt$1.repair(closestDamagedStructure$1);
+  }
+  var closestHostile = towerOpt$1.pos.findClosestByRange(103);
+  var closestHostile$1 = (closestHostile == null) ? undefined : Caml_option.some(closestHostile);
+  if (Belt_Option.isSome(closestHostile$1)) {
+    towerOpt$1.attack(closestHostile$1);
+    return ;
+  }
+  
+}
+
+function dispatchTask(param) {
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "harvester") {
@@ -1616,8 +1725,20 @@ function loop(param) {
   
 }
 
+function loop(param) {
+  spawnCreeps();
+  towerDefence();
+  return dispatchTask();
+}
+
+var spawnCreeps_1 = Main_bs.spawnCreeps = spawnCreeps;
+var towerDefence_1 = Main_bs.towerDefence = towerDefence;
+var dispatchTask_1 = Main_bs.dispatchTask = dispatchTask;
 var loop_1 = Main_bs.loop = loop;
 
 exports["default"] = Main_bs;
+exports.dispatchTask = dispatchTask_1;
 exports.loop = loop_1;
+exports.spawnCreeps = spawnCreeps_1;
+exports.towerDefence = towerDefence_1;
 //# sourceMappingURL=main.js.map
