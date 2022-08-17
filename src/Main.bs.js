@@ -2,6 +2,7 @@
 'use strict';
 
 var Js_dict = require("rescript/lib/js/js_dict.js");
+var RoleMiner = require("./RoleMiner.bs.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
 var RoleBuilder = require("./RoleBuilder.bs.js");
@@ -87,7 +88,52 @@ function dispatchTask(param) {
   
 }
 
+var minePos1 = {
+  x: 5,
+  y: 16
+};
+
+var minePos2 = {
+  x: 13,
+  y: 22
+};
+
+function mine(param) {
+  var name1 = RoleMiner.minerName(minePos1);
+  Game.spawns["Spawn1"].spawnCreep([
+        WORK,
+        WORK,
+        MOVE
+      ], name1, {
+        memory: {
+          role: "miner1"
+        }
+      });
+  var name2 = RoleMiner.minerName(minePos2);
+  Game.spawns["Spawn1"].spawnCreep([
+        WORK,
+        WORK,
+        MOVE
+      ], name2, {
+        memory: {
+          role: "miner2"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "miner1") {
+          RoleMiner.roleMiner(creep, minePos1);
+        }
+        if (creep.memory.role === "miner2") {
+          return RoleMiner.roleMiner(creep, minePos2);
+        }
+        
+      });
+  
+}
+
 function loop(param) {
+  mine(undefined);
   spawnCreeps(undefined);
   towerDefence(undefined);
   return dispatchTask(undefined);
@@ -96,5 +142,8 @@ function loop(param) {
 exports.spawnCreeps = spawnCreeps;
 exports.towerDefence = towerDefence;
 exports.dispatchTask = dispatchTask;
+exports.minePos1 = minePos1;
+exports.minePos2 = minePos2;
+exports.mine = mine;
 exports.loop = loop;
 /* No side effect */

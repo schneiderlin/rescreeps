@@ -73,7 +73,46 @@ let dispatchTask = () => {
   })
 }
 
+let minePos1 = {
+  "x": 5,
+  "y": 16,
+}
+
+let minePos2 = {
+  "x": 13,
+  "y": 22,
+}
+
+let mine = () => {
+  // 生成
+  let name1 = RoleMiner.minerName(minePos1)
+  let _ =
+    game.spawns
+    ->Js.Dict.unsafeGet("Spawn1")
+    ->spawnCreepOpts([work, work, move], name1, {"memory": {"role": "miner1"}})
+
+  let name2 = RoleMiner.minerName(minePos2)
+  let _ =
+    game.spawns
+    ->Js.Dict.unsafeGet("Spawn1")
+    ->spawnCreepOpts([work, work, move], name2, {"memory": {"role": "miner2"}})
+
+  // 分配任务
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "miner1" {
+      RoleMiner.roleMiner(creep, minePos1)
+    }
+    if creep.memory.role == "miner2" {
+      RoleMiner.roleMiner(creep, minePos2)
+    }
+  })
+}
+
 let loop = () => {
+  mine()
   spawnCreeps()
   towerDefence()
   dispatchTask()

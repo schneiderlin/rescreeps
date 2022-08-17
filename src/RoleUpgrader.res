@@ -13,9 +13,9 @@ let roleUpgrader = (creep: creep) => {
       let _ = creep->moveTo(creep.room["controller"]["pos"])
     }
   } else {
-    let sources = creep.room->findSources
-    if creep->harvest(sources[1]) == errNotInRange {
-      let _ = creep->moveTo(sources[1].pos)
+    let resources = creep.room->findDroppedResources
+    if creep->pickup(resources[1]) == errNotInRange {
+      let _ = creep->moveTo(resources[1].pos)
     }
   }
 }

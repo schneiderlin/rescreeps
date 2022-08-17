@@ -13,6 +13,7 @@ let roleBuilder = (creep: creep) => {
 
   // 根据 building 状态分配行为
   if creep.memory.building {
+    // 建造
     let targets = creep.room->findConstructionSites
     if targets->Js.Array2.length > 0 {
       if creep->build(targets[0]) == errNotInRange {
@@ -20,9 +21,10 @@ let roleBuilder = (creep: creep) => {
       }
     }
   } else {
-    let sources = creep.room->findSources
-    if creep->harvest(sources[0]) == errNotInRange {
-      let _ = creep->moveTo(sources[0].pos)
+    // 拿资源
+    let resources = creep.room->findDroppedResources
+    if creep->pickup(resources[0]) == errNotInRange {
+      let _ = creep->moveTo(resources[0].pos)
     }
   }
 }

@@ -6,9 +6,9 @@ var Caml_array = require("rescript/lib/js/caml_array.js");
 
 function roleHarvester(creep) {
   if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-    var sources = creep.room.find(105);
-    if (Caml_obj.caml_equal(creep.harvest(Caml_array.get(sources, 0)), ERR_NOT_IN_RANGE)) {
-      creep.moveTo(Caml_array.get(sources, 0).pos);
+    var resources = creep.room.find(106);
+    if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 0)), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(Caml_array.get(resources, 0).pos);
       return ;
     } else {
       return ;

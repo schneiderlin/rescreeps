@@ -89,11 +89,11 @@ caml_option.isNested = isNested;
 caml_option.option_get = option_get;
 caml_option.option_unwrap = option_unwrap;
 
-var Caml_option$2 = caml_option;
+var Caml_option$3 = caml_option;
 
 function get$1(dict, k) {
   if ((k in dict)) {
-    return Caml_option$2.some(dict[k]);
+    return Caml_option$3.some(dict[k]);
   }
   
 }
@@ -168,6 +168,625 @@ js_dict.values = values;
 js_dict.fromList = fromList;
 js_dict.fromArray = fromArray;
 js_dict.map = map$1;
+
+var RoleMiner_bs = {};
+
+var caml_obj = {};
+
+var caml = {};
+
+function caml_int_compare(x, y) {
+  if (x < y) {
+    return -1;
+  } else if (x === y) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+function caml_bool_compare(x, y) {
+  if (x) {
+    if (y) {
+      return 0;
+    } else {
+      return 1;
+    }
+  } else if (y) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+function caml_float_compare(x, y) {
+  if (x === y) {
+    return 0;
+  } else if (x < y) {
+    return -1;
+  } else if (x > y || x === x) {
+    return 1;
+  } else if (y === y) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+function caml_string_compare(s1, s2) {
+  if (s1 === s2) {
+    return 0;
+  } else if (s1 < s2) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
+function caml_bool_min(x, y) {
+  if (x) {
+    return y;
+  } else {
+    return x;
+  }
+}
+
+function caml_int_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_float_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_string_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_int32_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_bool_max(x, y) {
+  if (x) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_int_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_float_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_string_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_int32_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function i64_eq(x, y) {
+  if (x[1] === y[1]) {
+    return x[0] === y[0];
+  } else {
+    return false;
+  }
+}
+
+function i64_ge(param, param$1) {
+  var other_hi = param$1[0];
+  var hi = param[0];
+  if (hi > other_hi) {
+    return true;
+  } else if (hi < other_hi) {
+    return false;
+  } else {
+    return param[1] >= param$1[1];
+  }
+}
+
+function i64_neq(x, y) {
+  return !i64_eq(x, y);
+}
+
+function i64_lt(x, y) {
+  return !i64_ge(x, y);
+}
+
+function i64_gt(x, y) {
+  if (x[0] > y[0]) {
+    return true;
+  } else if (x[0] < y[0]) {
+    return false;
+  } else {
+    return x[1] > y[1];
+  }
+}
+
+function i64_le(x, y) {
+  return !i64_gt(x, y);
+}
+
+function i64_min(x, y) {
+  if (i64_ge(x, y)) {
+    return y;
+  } else {
+    return x;
+  }
+}
+
+function i64_max(x, y) {
+  if (i64_gt(x, y)) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+caml.caml_int_compare = caml_int_compare;
+caml.caml_bool_compare = caml_bool_compare;
+caml.caml_float_compare = caml_float_compare;
+caml.caml_string_compare = caml_string_compare;
+caml.caml_bool_min = caml_bool_min;
+caml.caml_int_min = caml_int_min;
+caml.caml_float_min = caml_float_min;
+caml.caml_string_min = caml_string_min;
+caml.caml_int32_min = caml_int32_min;
+caml.caml_bool_max = caml_bool_max;
+caml.caml_int_max = caml_int_max;
+caml.caml_float_max = caml_float_max;
+caml.caml_string_max = caml_string_max;
+caml.caml_int32_max = caml_int32_max;
+caml.i64_eq = i64_eq;
+caml.i64_neq = i64_neq;
+caml.i64_lt = i64_lt;
+caml.i64_gt = i64_gt;
+caml.i64_le = i64_le;
+caml.i64_ge = i64_ge;
+caml.i64_min = i64_min;
+caml.i64_max = i64_max;
+
+var Caml = caml;
+
+var for_in = (function(o,foo){
+        for (var x in o) { foo(x); }});
+
+var caml_obj_dup = (function(x){
+  if(Array.isArray(x)){
+    var len = x.length;  
+    var v = new Array(len);
+    for(var i = 0 ; i < len ; ++i){
+      v[i] = x[i];
+    }
+    if(x.TAG !== undefined){
+      v.TAG = x.TAG; // TODO this can be removed eventually
+    }  
+    return v 
+  } 
+  return Object.assign({},x)    
+});
+
+var update_dummy = (function(x,y){
+  var k;  
+  if(Array.isArray(y)){
+    for(k = 0; k < y.length ; ++k){
+      x[k] = y[k];
+    }
+    if(y.TAG !== undefined){
+      x.TAG = y.TAG;
+    }
+  } else {
+    for (var k in y){
+      x[k] = y[k];
+    }
+  }
+});
+
+function caml_compare(a, b) {
+  if (a === b) {
+    return 0;
+  }
+  var a_type = typeof a;
+  var b_type = typeof b;
+  switch (a_type) {
+    case "boolean" :
+        if (b_type === "boolean") {
+          return Caml.caml_bool_compare(a, b);
+        }
+        break;
+    case "function" :
+        if (b_type === "function") {
+          throw {
+                RE_EXN_ID: "Invalid_argument",
+                _1: "compare: functional value",
+                Error: new Error()
+              };
+        }
+        break;
+    case "number" :
+        if (b_type === "number") {
+          return Caml.caml_int_compare(a, b);
+        }
+        break;
+    case "string" :
+        if (b_type === "string") {
+          return Caml.caml_string_compare(a, b);
+        } else {
+          return 1;
+        }
+    case "undefined" :
+        return -1;
+      
+  }
+  switch (b_type) {
+    case "string" :
+        return -1;
+    case "undefined" :
+        return 1;
+    default:
+      if (a_type === "boolean") {
+        return 1;
+      }
+      if (b_type === "boolean") {
+        return -1;
+      }
+      if (a_type === "function") {
+        return 1;
+      }
+      if (b_type === "function") {
+        return -1;
+      }
+      if (a_type === "number") {
+        if (b === null || b.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+      if (b_type === "number") {
+        if (a === null || a.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+      if (a === null) {
+        if (b.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+      if (b === null) {
+        if (a.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+      if (a.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+        if (b.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+          return aux_obj_compare(a, b);
+        } else {
+          return -1;
+        }
+      }
+      var tag_a = a.TAG | 0;
+      var tag_b = b.TAG | 0;
+      if (tag_a === 248) {
+        return Caml.caml_int_compare(a[1], b[1]);
+      }
+      if (tag_a === 251) {
+        throw {
+              RE_EXN_ID: "Invalid_argument",
+              _1: "equal: abstract value",
+              Error: new Error()
+            };
+      }
+      if (tag_a !== tag_b) {
+        if (tag_a < tag_b) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+      var len_a = a.length | 0;
+      var len_b = b.length | 0;
+      if (len_a === len_b) {
+        if (Array.isArray(a)) {
+          var _i = 0;
+          while(true) {
+            var i = _i;
+            if (i === len_a) {
+              return 0;
+            }
+            var res = caml_compare(a[i], b[i]);
+            if (res !== 0) {
+              return res;
+            }
+            _i = i + 1 | 0;
+            continue ;
+          }        } else if ((a instanceof Date && b instanceof Date)) {
+          return (a - b);
+        } else {
+          return aux_obj_compare(a, b);
+        }
+      } else if (len_a < len_b) {
+        var _i$1 = 0;
+        while(true) {
+          var i$1 = _i$1;
+          if (i$1 === len_a) {
+            return -1;
+          }
+          var res$1 = caml_compare(a[i$1], b[i$1]);
+          if (res$1 !== 0) {
+            return res$1;
+          }
+          _i$1 = i$1 + 1 | 0;
+          continue ;
+        }      } else {
+        var _i$2 = 0;
+        while(true) {
+          var i$2 = _i$2;
+          if (i$2 === len_b) {
+            return 1;
+          }
+          var res$2 = caml_compare(a[i$2], b[i$2]);
+          if (res$2 !== 0) {
+            return res$2;
+          }
+          _i$2 = i$2 + 1 | 0;
+          continue ;
+        }      }
+  }
+}
+
+function aux_obj_compare(a, b) {
+  var min_key_lhs = {
+    contents: undefined
+  };
+  var min_key_rhs = {
+    contents: undefined
+  };
+  var do_key = function (param, key) {
+    var min_key = param[2];
+    var b = param[1];
+    if (!(!b.hasOwnProperty(key) || caml_compare(param[0][key], b[key]) > 0)) {
+      return ;
+    }
+    var mk = min_key.contents;
+    if (mk !== undefined && key >= mk) {
+      return ;
+    } else {
+      min_key.contents = key;
+      return ;
+    }
+  };
+  var partial_arg = [
+    a,
+    b,
+    min_key_rhs
+  ];
+  var do_key_a = function (param) {
+    return do_key(partial_arg, param);
+  };
+  var partial_arg$1 = [
+    b,
+    a,
+    min_key_lhs
+  ];
+  var do_key_b = function (param) {
+    return do_key(partial_arg$1, param);
+  };
+  for_in(a, do_key_a);
+  for_in(b, do_key_b);
+  var match = min_key_lhs.contents;
+  var match$1 = min_key_rhs.contents;
+  if (match !== undefined) {
+    if (match$1 !== undefined) {
+      return Caml.caml_string_compare(match, match$1);
+    } else {
+      return -1;
+    }
+  } else if (match$1 !== undefined) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+function caml_equal(a, b) {
+  if (a === b) {
+    return true;
+  }
+  var a_type = typeof a;
+  if (a_type === "string" || a_type === "number" || a_type === "boolean" || a_type === "undefined" || a === null) {
+    return false;
+  }
+  var b_type = typeof b;
+  if (a_type === "function" || b_type === "function") {
+    throw {
+          RE_EXN_ID: "Invalid_argument",
+          _1: "equal: functional value",
+          Error: new Error()
+        };
+  }
+  if (b_type === "number" || b_type === "undefined" || b === null) {
+    return false;
+  }
+  var tag_a = a.TAG | 0;
+  var tag_b = b.TAG | 0;
+  if (tag_a === 248) {
+    return a[1] === b[1];
+  }
+  if (tag_a === 251) {
+    throw {
+          RE_EXN_ID: "Invalid_argument",
+          _1: "equal: abstract value",
+          Error: new Error()
+        };
+  }
+  if (tag_a !== tag_b) {
+    return false;
+  }
+  var len_a = a.length | 0;
+  var len_b = b.length | 0;
+  if (len_a === len_b) {
+    if (Array.isArray(a)) {
+      var _i = 0;
+      while(true) {
+        var i = _i;
+        if (i === len_a) {
+          return true;
+        }
+        if (!caml_equal(a[i], b[i])) {
+          return false;
+        }
+        _i = i + 1 | 0;
+        continue ;
+      }    } else if ((a instanceof Date && b instanceof Date)) {
+      return !(a > b || a < b);
+    } else {
+      var result = {
+        contents: true
+      };
+      var do_key_a = function (key) {
+        if (!b.hasOwnProperty(key)) {
+          result.contents = false;
+          return ;
+        }
+        
+      };
+      var do_key_b = function (key) {
+        if (!a.hasOwnProperty(key) || !caml_equal(b[key], a[key])) {
+          result.contents = false;
+          return ;
+        }
+        
+      };
+      for_in(a, do_key_a);
+      if (result.contents) {
+        for_in(b, do_key_b);
+      }
+      return result.contents;
+    }
+  } else {
+    return false;
+  }
+}
+
+function caml_equal_null(x, y) {
+  if (y !== null) {
+    return caml_equal(x, y);
+  } else {
+    return x === y;
+  }
+}
+
+function caml_equal_undefined(x, y) {
+  if (y !== undefined) {
+    return caml_equal(x, y);
+  } else {
+    return x === y;
+  }
+}
+
+function caml_equal_nullable(x, y) {
+  if (y == null) {
+    return x === y;
+  } else {
+    return caml_equal(x, y);
+  }
+}
+
+function caml_notequal(a, b) {
+  return !caml_equal(a, b);
+}
+
+function caml_greaterequal(a, b) {
+  return caml_compare(a, b) >= 0;
+}
+
+function caml_greaterthan(a, b) {
+  return caml_compare(a, b) > 0;
+}
+
+function caml_lessequal(a, b) {
+  return caml_compare(a, b) <= 0;
+}
+
+function caml_lessthan(a, b) {
+  return caml_compare(a, b) < 0;
+}
+
+function caml_min(x, y) {
+  if (caml_compare(x, y) <= 0) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_max(x, y) {
+  if (caml_compare(x, y) >= 0) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+caml_obj.caml_obj_dup = caml_obj_dup;
+caml_obj.update_dummy = update_dummy;
+caml_obj.caml_compare = caml_compare;
+caml_obj.caml_equal = caml_equal;
+caml_obj.caml_equal_null = caml_equal_null;
+caml_obj.caml_equal_undefined = caml_equal_undefined;
+caml_obj.caml_equal_nullable = caml_equal_nullable;
+caml_obj.caml_notequal = caml_notequal;
+caml_obj.caml_greaterequal = caml_greaterequal;
+caml_obj.caml_greaterthan = caml_greaterthan;
+caml_obj.caml_lessthan = caml_lessthan;
+caml_obj.caml_lessequal = caml_lessequal;
+caml_obj.caml_min = caml_min;
+caml_obj.caml_max = caml_max;
 
 var belt_Option = {};
 
@@ -812,10 +1431,10 @@ curry._8 = _8;
 curry.__8 = __8;
 
 var Curry = curry;
-var Caml_option$1 = caml_option;
+var Caml_option$2 = caml_option;
 
 function keepU(opt, p) {
-  if (opt !== undefined && p(Caml_option$1.valFromOption(opt))) {
+  if (opt !== undefined && p(Caml_option$2.valFromOption(opt))) {
     return opt;
   }
   
@@ -827,7 +1446,7 @@ function keep(opt, p) {
 
 function forEachU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$1.valFromOption(opt));
+    return f(Caml_option$2.valFromOption(opt));
   }
   
 }
@@ -838,7 +1457,7 @@ function forEach(opt, f) {
 
 function getExn(x) {
   if (x !== undefined) {
-    return Caml_option$1.valFromOption(x);
+    return Caml_option$2.valFromOption(x);
   }
   throw {
         RE_EXN_ID: "Not_found",
@@ -848,7 +1467,7 @@ function getExn(x) {
 
 function mapWithDefaultU(opt, $$default, f) {
   if (opt !== undefined) {
-    return f(Caml_option$1.valFromOption(opt));
+    return f(Caml_option$2.valFromOption(opt));
   } else {
     return $$default;
   }
@@ -860,7 +1479,7 @@ function mapWithDefault(opt, $$default, f) {
 
 function mapU(opt, f) {
   if (opt !== undefined) {
-    return Caml_option$1.some(f(Caml_option$1.valFromOption(opt)));
+    return Caml_option$2.some(f(Caml_option$2.valFromOption(opt)));
   }
   
 }
@@ -871,7 +1490,7 @@ function map(opt, f) {
 
 function flatMapU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$1.valFromOption(opt));
+    return f(Caml_option$2.valFromOption(opt));
   }
   
 }
@@ -882,7 +1501,7 @@ function flatMap(opt, f) {
 
 function getWithDefault(opt, $$default) {
   if (opt !== undefined) {
-    return Caml_option$1.valFromOption(opt);
+    return Caml_option$2.valFromOption(opt);
   } else {
     return $$default;
   }
@@ -899,7 +1518,7 @@ function isNone(x) {
 function eqU(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$1.valFromOption(a), Caml_option$1.valFromOption(b));
+      return f(Caml_option$2.valFromOption(a), Caml_option$2.valFromOption(b));
     } else {
       return false;
     }
@@ -915,7 +1534,7 @@ function eq(a, b, f) {
 function cmpU(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$1.valFromOption(a), Caml_option$1.valFromOption(b));
+      return f(Caml_option$2.valFromOption(a), Caml_option$2.valFromOption(b));
     } else {
       return 1;
     }
@@ -949,624 +1568,47 @@ belt_Option.eq = eq;
 belt_Option.cmpU = cmpU;
 belt_Option.cmp = cmp;
 
+var Caml_obj$3 = caml_obj;
+var Belt_Option$1 = belt_Option;
+var Caml_option$1 = caml_option;
+
+function samePosition(p1, p2) {
+  if (Caml_obj$3.caml_equal(p1.x, p2.x)) {
+    return Caml_obj$3.caml_equal(p2.y, p2.y);
+  } else {
+    return false;
+  }
+}
+
+function minerName(minePos) {
+  return "Miner" + String(minePos.x) + "." + String(minePos.y);
+}
+
+function roleMiner(creep, minePos) {
+  if (samePosition(creep.pos, minePos)) {
+    console.log("miner working", creep.name);
+    var sources = creep.room.find(105);
+    var source = creep.pos.findClosestByPath(sources);
+    var source$1 = (source == null) ? undefined : Caml_option$1.some(source);
+    console.log(sources, source$1);
+    return Belt_Option$1.forEach(source$1, (function (s) {
+                  if (Caml_obj$3.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
+                    creep.moveTo(s.pos);
+                    return ;
+                  }
+                  
+                }));
+  }
+  var moveErr = creep.moveTo(minePos.x, minePos.y);
+  console.log("miner moving", creep.name, moveErr);
+  
+}
+
+RoleMiner_bs.samePosition = samePosition;
+RoleMiner_bs.minerName = minerName;
+RoleMiner_bs.roleMiner = roleMiner;
+
 var RoleBuilder_bs = {};
-
-var caml_obj = {};
-
-var caml = {};
-
-function caml_int_compare(x, y) {
-  if (x < y) {
-    return -1;
-  } else if (x === y) {
-    return 0;
-  } else {
-    return 1;
-  }
-}
-
-function caml_bool_compare(x, y) {
-  if (x) {
-    if (y) {
-      return 0;
-    } else {
-      return 1;
-    }
-  } else if (y) {
-    return -1;
-  } else {
-    return 0;
-  }
-}
-
-function caml_float_compare(x, y) {
-  if (x === y) {
-    return 0;
-  } else if (x < y) {
-    return -1;
-  } else if (x > y || x === x) {
-    return 1;
-  } else if (y === y) {
-    return -1;
-  } else {
-    return 0;
-  }
-}
-
-function caml_string_compare(s1, s2) {
-  if (s1 === s2) {
-    return 0;
-  } else if (s1 < s2) {
-    return -1;
-  } else {
-    return 1;
-  }
-}
-
-function caml_bool_min(x, y) {
-  if (x) {
-    return y;
-  } else {
-    return x;
-  }
-}
-
-function caml_int_min(x, y) {
-  if (x < y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_float_min(x, y) {
-  if (x < y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_string_min(x, y) {
-  if (x < y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_int32_min(x, y) {
-  if (x < y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_bool_max(x, y) {
-  if (x) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_int_max(x, y) {
-  if (x > y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_float_max(x, y) {
-  if (x > y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_string_max(x, y) {
-  if (x > y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_int32_max(x, y) {
-  if (x > y) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function i64_eq(x, y) {
-  if (x[1] === y[1]) {
-    return x[0] === y[0];
-  } else {
-    return false;
-  }
-}
-
-function i64_ge(param, param$1) {
-  var other_hi = param$1[0];
-  var hi = param[0];
-  if (hi > other_hi) {
-    return true;
-  } else if (hi < other_hi) {
-    return false;
-  } else {
-    return param[1] >= param$1[1];
-  }
-}
-
-function i64_neq(x, y) {
-  return !i64_eq(x, y);
-}
-
-function i64_lt(x, y) {
-  return !i64_ge(x, y);
-}
-
-function i64_gt(x, y) {
-  if (x[0] > y[0]) {
-    return true;
-  } else if (x[0] < y[0]) {
-    return false;
-  } else {
-    return x[1] > y[1];
-  }
-}
-
-function i64_le(x, y) {
-  return !i64_gt(x, y);
-}
-
-function i64_min(x, y) {
-  if (i64_ge(x, y)) {
-    return y;
-  } else {
-    return x;
-  }
-}
-
-function i64_max(x, y) {
-  if (i64_gt(x, y)) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-caml.caml_int_compare = caml_int_compare;
-caml.caml_bool_compare = caml_bool_compare;
-caml.caml_float_compare = caml_float_compare;
-caml.caml_string_compare = caml_string_compare;
-caml.caml_bool_min = caml_bool_min;
-caml.caml_int_min = caml_int_min;
-caml.caml_float_min = caml_float_min;
-caml.caml_string_min = caml_string_min;
-caml.caml_int32_min = caml_int32_min;
-caml.caml_bool_max = caml_bool_max;
-caml.caml_int_max = caml_int_max;
-caml.caml_float_max = caml_float_max;
-caml.caml_string_max = caml_string_max;
-caml.caml_int32_max = caml_int32_max;
-caml.i64_eq = i64_eq;
-caml.i64_neq = i64_neq;
-caml.i64_lt = i64_lt;
-caml.i64_gt = i64_gt;
-caml.i64_le = i64_le;
-caml.i64_ge = i64_ge;
-caml.i64_min = i64_min;
-caml.i64_max = i64_max;
-
-var Caml = caml;
-
-var for_in = (function(o,foo){
-        for (var x in o) { foo(x); }});
-
-var caml_obj_dup = (function(x){
-  if(Array.isArray(x)){
-    var len = x.length;  
-    var v = new Array(len);
-    for(var i = 0 ; i < len ; ++i){
-      v[i] = x[i];
-    }
-    if(x.TAG !== undefined){
-      v.TAG = x.TAG; // TODO this can be removed eventually
-    }  
-    return v 
-  } 
-  return Object.assign({},x)    
-});
-
-var update_dummy = (function(x,y){
-  var k;  
-  if(Array.isArray(y)){
-    for(k = 0; k < y.length ; ++k){
-      x[k] = y[k];
-    }
-    if(y.TAG !== undefined){
-      x.TAG = y.TAG;
-    }
-  } else {
-    for (var k in y){
-      x[k] = y[k];
-    }
-  }
-});
-
-function caml_compare(a, b) {
-  if (a === b) {
-    return 0;
-  }
-  var a_type = typeof a;
-  var b_type = typeof b;
-  switch (a_type) {
-    case "boolean" :
-        if (b_type === "boolean") {
-          return Caml.caml_bool_compare(a, b);
-        }
-        break;
-    case "function" :
-        if (b_type === "function") {
-          throw {
-                RE_EXN_ID: "Invalid_argument",
-                _1: "compare: functional value",
-                Error: new Error()
-              };
-        }
-        break;
-    case "number" :
-        if (b_type === "number") {
-          return Caml.caml_int_compare(a, b);
-        }
-        break;
-    case "string" :
-        if (b_type === "string") {
-          return Caml.caml_string_compare(a, b);
-        } else {
-          return 1;
-        }
-    case "undefined" :
-        return -1;
-      
-  }
-  switch (b_type) {
-    case "string" :
-        return -1;
-    case "undefined" :
-        return 1;
-    default:
-      if (a_type === "boolean") {
-        return 1;
-      }
-      if (b_type === "boolean") {
-        return -1;
-      }
-      if (a_type === "function") {
-        return 1;
-      }
-      if (b_type === "function") {
-        return -1;
-      }
-      if (a_type === "number") {
-        if (b === null || b.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-          return 1;
-        } else {
-          return -1;
-        }
-      }
-      if (b_type === "number") {
-        if (a === null || a.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-      if (a === null) {
-        if (b.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-          return 1;
-        } else {
-          return -1;
-        }
-      }
-      if (b === null) {
-        if (a.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-      if (a.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-        if (b.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
-          return aux_obj_compare(a, b);
-        } else {
-          return -1;
-        }
-      }
-      var tag_a = a.TAG | 0;
-      var tag_b = b.TAG | 0;
-      if (tag_a === 248) {
-        return Caml.caml_int_compare(a[1], b[1]);
-      }
-      if (tag_a === 251) {
-        throw {
-              RE_EXN_ID: "Invalid_argument",
-              _1: "equal: abstract value",
-              Error: new Error()
-            };
-      }
-      if (tag_a !== tag_b) {
-        if (tag_a < tag_b) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-      var len_a = a.length | 0;
-      var len_b = b.length | 0;
-      if (len_a === len_b) {
-        if (Array.isArray(a)) {
-          var _i = 0;
-          while(true) {
-            var i = _i;
-            if (i === len_a) {
-              return 0;
-            }
-            var res = caml_compare(a[i], b[i]);
-            if (res !== 0) {
-              return res;
-            }
-            _i = i + 1 | 0;
-            continue ;
-          }        } else if ((a instanceof Date && b instanceof Date)) {
-          return (a - b);
-        } else {
-          return aux_obj_compare(a, b);
-        }
-      } else if (len_a < len_b) {
-        var _i$1 = 0;
-        while(true) {
-          var i$1 = _i$1;
-          if (i$1 === len_a) {
-            return -1;
-          }
-          var res$1 = caml_compare(a[i$1], b[i$1]);
-          if (res$1 !== 0) {
-            return res$1;
-          }
-          _i$1 = i$1 + 1 | 0;
-          continue ;
-        }      } else {
-        var _i$2 = 0;
-        while(true) {
-          var i$2 = _i$2;
-          if (i$2 === len_b) {
-            return 1;
-          }
-          var res$2 = caml_compare(a[i$2], b[i$2]);
-          if (res$2 !== 0) {
-            return res$2;
-          }
-          _i$2 = i$2 + 1 | 0;
-          continue ;
-        }      }
-  }
-}
-
-function aux_obj_compare(a, b) {
-  var min_key_lhs = {
-    contents: undefined
-  };
-  var min_key_rhs = {
-    contents: undefined
-  };
-  var do_key = function (param, key) {
-    var min_key = param[2];
-    var b = param[1];
-    if (!(!b.hasOwnProperty(key) || caml_compare(param[0][key], b[key]) > 0)) {
-      return ;
-    }
-    var mk = min_key.contents;
-    if (mk !== undefined && key >= mk) {
-      return ;
-    } else {
-      min_key.contents = key;
-      return ;
-    }
-  };
-  var partial_arg = [
-    a,
-    b,
-    min_key_rhs
-  ];
-  var do_key_a = function (param) {
-    return do_key(partial_arg, param);
-  };
-  var partial_arg$1 = [
-    b,
-    a,
-    min_key_lhs
-  ];
-  var do_key_b = function (param) {
-    return do_key(partial_arg$1, param);
-  };
-  for_in(a, do_key_a);
-  for_in(b, do_key_b);
-  var match = min_key_lhs.contents;
-  var match$1 = min_key_rhs.contents;
-  if (match !== undefined) {
-    if (match$1 !== undefined) {
-      return Caml.caml_string_compare(match, match$1);
-    } else {
-      return -1;
-    }
-  } else if (match$1 !== undefined) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-function caml_equal(a, b) {
-  if (a === b) {
-    return true;
-  }
-  var a_type = typeof a;
-  if (a_type === "string" || a_type === "number" || a_type === "boolean" || a_type === "undefined" || a === null) {
-    return false;
-  }
-  var b_type = typeof b;
-  if (a_type === "function" || b_type === "function") {
-    throw {
-          RE_EXN_ID: "Invalid_argument",
-          _1: "equal: functional value",
-          Error: new Error()
-        };
-  }
-  if (b_type === "number" || b_type === "undefined" || b === null) {
-    return false;
-  }
-  var tag_a = a.TAG | 0;
-  var tag_b = b.TAG | 0;
-  if (tag_a === 248) {
-    return a[1] === b[1];
-  }
-  if (tag_a === 251) {
-    throw {
-          RE_EXN_ID: "Invalid_argument",
-          _1: "equal: abstract value",
-          Error: new Error()
-        };
-  }
-  if (tag_a !== tag_b) {
-    return false;
-  }
-  var len_a = a.length | 0;
-  var len_b = b.length | 0;
-  if (len_a === len_b) {
-    if (Array.isArray(a)) {
-      var _i = 0;
-      while(true) {
-        var i = _i;
-        if (i === len_a) {
-          return true;
-        }
-        if (!caml_equal(a[i], b[i])) {
-          return false;
-        }
-        _i = i + 1 | 0;
-        continue ;
-      }    } else if ((a instanceof Date && b instanceof Date)) {
-      return !(a > b || a < b);
-    } else {
-      var result = {
-        contents: true
-      };
-      var do_key_a = function (key) {
-        if (!b.hasOwnProperty(key)) {
-          result.contents = false;
-          return ;
-        }
-        
-      };
-      var do_key_b = function (key) {
-        if (!a.hasOwnProperty(key) || !caml_equal(b[key], a[key])) {
-          result.contents = false;
-          return ;
-        }
-        
-      };
-      for_in(a, do_key_a);
-      if (result.contents) {
-        for_in(b, do_key_b);
-      }
-      return result.contents;
-    }
-  } else {
-    return false;
-  }
-}
-
-function caml_equal_null(x, y) {
-  if (y !== null) {
-    return caml_equal(x, y);
-  } else {
-    return x === y;
-  }
-}
-
-function caml_equal_undefined(x, y) {
-  if (y !== undefined) {
-    return caml_equal(x, y);
-  } else {
-    return x === y;
-  }
-}
-
-function caml_equal_nullable(x, y) {
-  if (y == null) {
-    return x === y;
-  } else {
-    return caml_equal(x, y);
-  }
-}
-
-function caml_notequal(a, b) {
-  return !caml_equal(a, b);
-}
-
-function caml_greaterequal(a, b) {
-  return caml_compare(a, b) >= 0;
-}
-
-function caml_greaterthan(a, b) {
-  return caml_compare(a, b) > 0;
-}
-
-function caml_lessequal(a, b) {
-  return caml_compare(a, b) <= 0;
-}
-
-function caml_lessthan(a, b) {
-  return caml_compare(a, b) < 0;
-}
-
-function caml_min(x, y) {
-  if (caml_compare(x, y) <= 0) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function caml_max(x, y) {
-  if (caml_compare(x, y) >= 0) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-caml_obj.caml_obj_dup = caml_obj_dup;
-caml_obj.update_dummy = update_dummy;
-caml_obj.caml_compare = caml_compare;
-caml_obj.caml_equal = caml_equal;
-caml_obj.caml_equal_null = caml_equal_null;
-caml_obj.caml_equal_undefined = caml_equal_undefined;
-caml_obj.caml_equal_nullable = caml_equal_nullable;
-caml_obj.caml_notequal = caml_notequal;
-caml_obj.caml_greaterequal = caml_greaterequal;
-caml_obj.caml_greaterthan = caml_greaterthan;
-caml_obj.caml_lessthan = caml_lessthan;
-caml_obj.caml_lessequal = caml_lessequal;
-caml_obj.caml_min = caml_min;
-caml_obj.caml_max = caml_max;
 
 var Caml_obj$2 = caml_obj;
 var Caml_array$2 = caml_array;
@@ -1589,9 +1631,9 @@ function roleBuilder(creep) {
       return ;
     }
   }
-  var sources = creep.room.find(105);
-  if (Caml_obj$2.caml_equal(creep.harvest(Caml_array$2.get(sources, 0)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array$2.get(sources, 0).pos);
+  var resources = creep.room.find(106);
+  if (Caml_obj$2.caml_equal(creep.pickup(Caml_array$2.get(resources, 0)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array$2.get(resources, 0).pos);
     return ;
   }
   
@@ -1619,9 +1661,9 @@ function roleUpgrader(creep) {
       return ;
     }
   }
-  var sources = creep.room.find(105);
-  if (Caml_obj$1.caml_equal(creep.harvest(Caml_array$1.get(sources, 1)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array$1.get(sources, 1).pos);
+  var resources = creep.room.find(106);
+  if (Caml_obj$1.caml_equal(creep.pickup(Caml_array$1.get(resources, 1)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array$1.get(resources, 1).pos);
     return ;
   }
   
@@ -1636,9 +1678,9 @@ var Caml_array = caml_array;
 
 function roleHarvester(creep) {
   if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-    var sources = creep.room.find(105);
-    if (Caml_obj.caml_equal(creep.harvest(Caml_array.get(sources, 0)), ERR_NOT_IN_RANGE)) {
-      creep.moveTo(Caml_array.get(sources, 0).pos);
+    var resources = creep.room.find(106);
+    if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 0)), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(Caml_array.get(resources, 0).pos);
       return ;
     } else {
       return ;
@@ -1662,6 +1704,7 @@ function roleHarvester(creep) {
 RoleHarvester_bs.roleHarvester = roleHarvester;
 
 var Js_dict = js_dict;
+var RoleMiner = RoleMiner_bs;
 var Belt_Option = belt_Option;
 var Caml_option = caml_option;
 var RoleBuilder = RoleBuilder_bs;
@@ -1747,7 +1790,52 @@ function dispatchTask(param) {
   
 }
 
+var minePos1 = {
+  x: 5,
+  y: 16
+};
+
+var minePos2 = {
+  x: 13,
+  y: 22
+};
+
+function mine(param) {
+  var name1 = RoleMiner.minerName(minePos1);
+  Game.spawns["Spawn1"].spawnCreep([
+        WORK,
+        WORK,
+        MOVE
+      ], name1, {
+        memory: {
+          role: "miner1"
+        }
+      });
+  var name2 = RoleMiner.minerName(minePos2);
+  Game.spawns["Spawn1"].spawnCreep([
+        WORK,
+        WORK,
+        MOVE
+      ], name2, {
+        memory: {
+          role: "miner2"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "miner1") {
+          RoleMiner.roleMiner(creep, minePos1);
+        }
+        if (creep.memory.role === "miner2") {
+          return RoleMiner.roleMiner(creep, minePos2);
+        }
+        
+      });
+  
+}
+
 function loop(param) {
+  mine();
   spawnCreeps();
   towerDefence();
   return dispatchTask();
@@ -1756,11 +1844,17 @@ function loop(param) {
 var spawnCreeps_1 = Main_bs.spawnCreeps = spawnCreeps;
 var towerDefence_1 = Main_bs.towerDefence = towerDefence;
 var dispatchTask_1 = Main_bs.dispatchTask = dispatchTask;
+var minePos1_1 = Main_bs.minePos1 = minePos1;
+var minePos2_1 = Main_bs.minePos2 = minePos2;
+var mine_1 = Main_bs.mine = mine;
 var loop_1 = Main_bs.loop = loop;
 
 exports["default"] = Main_bs;
 exports.dispatchTask = dispatchTask_1;
 exports.loop = loop_1;
+exports.mine = mine_1;
+exports.minePos1 = minePos1_1;
+exports.minePos2 = minePos2_1;
 exports.spawnCreeps = spawnCreeps_1;
 exports.towerDefence = towerDefence_1;
 //# sourceMappingURL=main.js.map

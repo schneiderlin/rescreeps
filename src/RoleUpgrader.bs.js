@@ -19,9 +19,9 @@ function roleUpgrader(creep) {
       return ;
     }
   }
-  var sources = creep.room.find(105);
-  if (Caml_obj.caml_equal(creep.harvest(Caml_array.get(sources, 1)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array.get(sources, 1).pos);
+  var resources = creep.room.find(106);
+  if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 1)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array.get(resources, 1).pos);
     return ;
   }
   

@@ -2,9 +2,9 @@ open Binding
 
 let roleHarvester = (creep: creep) => {
   if creep.store->getFreeCapacityE(resourceEnergy) > 0 {
-    let sources = creep.room->findSources
-    if creep->harvest(sources[0]) == errNotInRange {
-      let _ = creep->moveTo(sources[0].pos)
+    let resources = creep.room->findDroppedResources
+    if creep->pickup(resources[0]) == errNotInRange {
+      let _ = creep->moveTo(resources[0].pos)
     }
   } else {
     let targets = creep.room->findStructures
