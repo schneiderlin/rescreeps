@@ -1605,7 +1605,13 @@ var Caml_obj$1 = caml_obj;
 var Caml_array$1 = caml_array;
 
 function roleUpgrader(creep) {
-  if (creep.store.getUsedCapacity(RESOURCE_ENERGY) !== 0) {
+  if (creep.memory.upgrading && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.upgrading = false;
+  }
+  if (!creep.memory.upgrading && creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.upgrading = true;
+  }
+  if (creep.memory.upgrading) {
     if (Caml_obj$1.caml_equal(creep.upgradeController(creep.room.controller), ERR_NOT_IN_RANGE)) {
       creep.moveTo(creep.room.controller.pos);
       return ;
@@ -1614,8 +1620,8 @@ function roleUpgrader(creep) {
     }
   }
   var sources = creep.room.find(105);
-  if (Caml_obj$1.caml_equal(creep.harvest(Caml_array$1.get(sources, 0)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array$1.get(sources, 0).pos);
+  if (Caml_obj$1.caml_equal(creep.harvest(Caml_array$1.get(sources, 1)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array$1.get(sources, 1).pos);
     return ;
   }
   

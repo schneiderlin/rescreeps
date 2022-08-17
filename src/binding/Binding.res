@@ -78,7 +78,12 @@ type stats = {
   bucket: int,
 }
 
-type memory = {creeps: Js.Dict.t<string>, role: string, mutable building: bool}
+type memory = {
+  creeps: Js.Dict.t<string>,
+  role: string,
+  mutable building: bool,
+  mutable upgrading: bool
+}
 
 type resource = {pos: roomPosition, amount: int}
 
