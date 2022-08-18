@@ -23,8 +23,8 @@ let roleBuilder = (creep: creep) => {
   } else {
     // 拿资源
     let resources = creep.room->findDroppedResources
-    if creep->pickup(resources[0]) == errNotInRange {
-      let _ = creep->moveTo(resources[0].pos)
+    if creep->pickup(resources[1]) == errNotInRange {
+      let _ = creep->moveTo(resources[1].pos)
     }
   }
 }

@@ -1,6 +1,6 @@
 open Binding
 
-let spawnCreeps = () => {
+let spawnCreeps = spawn => {
   let harvesters =
     game.creeps
     ->Js.Dict.values
@@ -11,10 +11,7 @@ let spawnCreeps = () => {
   if harvesters->Js.Array2.length < 2 {
     let newName = "Harvester" ++ game.time->Belt.Int.toString
     Js.log2("Spawning new harvester: ", newName)
-    let _ =
-      game.spawns
-      ->Js.Dict.unsafeGet("Spawn1")
-      ->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
+    let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
   }
 
   let upgraders =
@@ -27,10 +24,7 @@ let spawnCreeps = () => {
   if upgraders->Js.Array2.length < 1 {
     let newName = "Upgrader" ++ game.time->Belt.Int.toString
     Js.log2("Spawning new upgrader: ", newName)
-    let _ =
-      game.spawns
-      ->Js.Dict.unsafeGet("Spawn1")
-      ->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "upgrader"}})
+    let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "upgrader"}})
   }
 }
 
@@ -83,19 +77,13 @@ let minePos2 = {
   "y": 22,
 }
 
-let mine = () => {
+let mine = spawn => {
   // 生成
   let name1 = RoleMiner.minerName(minePos1)
-  let _ =
-    game.spawns
-    ->Js.Dict.unsafeGet("Spawn1")
-    ->spawnCreepOpts([work, work, move], name1, {"memory": {"role": "miner1"}})
+  let _ = spawn->spawnCreepOpts([work, work, move], name1, {"memory": {"role": "miner1"}})
 
   let name2 = RoleMiner.minerName(minePos2)
-  let _ =
-    game.spawns
-    ->Js.Dict.unsafeGet("Spawn1")
-    ->spawnCreepOpts([work, work, move], name2, {"memory": {"role": "miner2"}})
+  let _ = spawn->spawnCreepOpts([work, work, move], name2, {"memory": {"role": "miner2"}})
 
   // 分配任务
   game.creeps
@@ -111,9 +99,45 @@ let mine = () => {
   })
 }
 
+let build = (spawn, n) => {
+  // 生成
+  let builders =
+    game.creeps
+    ->Js.Dict.values
+    ->Js.Array2.filter(creep => {
+      creep.memory.role == "builder"
+    })
+
+  if builders->Js.Array2.length < n {
+    let newName = "Builder" ++ game.time->Belt.Int.toString
+    Js.log2("Spawning new Builder: ", newName)
+    let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "builder"}})
+  }
+
+  // 房间里面有没有工地
+  let noConstructionSite = spawn["room"]->findConstructionSites->Js.Array2.length == 0
+
+  // 分配任务
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "builder" {
+      if noConstructionSite {
+        RoleUpgrader.roleUpgrader(creep)
+      } else {
+        RoleBuilder.roleBuilder(creep)
+      }
+    }
+  })
+}
+
 let loop = () => {
-  mine()
-  spawnCreeps()
+  let spawn = game.spawns->Js.Dict.unsafeGet("Spawn1")
+
+  mine(spawn)
+  build(spawn, 2)
+  spawnCreeps(spawn)
   towerDefence()
   dispatchTask()
 }

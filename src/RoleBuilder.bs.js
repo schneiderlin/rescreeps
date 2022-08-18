@@ -23,8 +23,8 @@ function roleBuilder(creep) {
     }
   }
   var resources = creep.room.find(106);
-  if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 0)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array.get(resources, 0).pos);
+  if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 1)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array.get(resources, 1).pos);
     return ;
   }
   

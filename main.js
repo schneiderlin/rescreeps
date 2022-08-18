@@ -1632,8 +1632,8 @@ function roleBuilder(creep) {
     }
   }
   var resources = creep.room.find(106);
-  if (Caml_obj$2.caml_equal(creep.pickup(Caml_array$2.get(resources, 0)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array$2.get(resources, 0).pos);
+  if (Caml_obj$2.caml_equal(creep.pickup(Caml_array$2.get(resources, 1)), ERR_NOT_IN_RANGE)) {
+    creep.moveTo(Caml_array$2.get(resources, 1).pos);
     return ;
   }
   
@@ -1711,14 +1711,14 @@ var RoleBuilder = RoleBuilder_bs;
 var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 
-function spawnCreeps(param) {
+function spawnCreeps(spawn) {
   var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "harvester";
       });
   if (harvesters.length < 2) {
     var newName = "Harvester" + String(Game.time);
     console.log("Spawning new harvester: ", newName);
-    Game.spawns["Spawn1"].spawnCreep([
+    spawn.spawnCreep([
           WORK,
           CARRY,
           MOVE
@@ -1736,7 +1736,7 @@ function spawnCreeps(param) {
   }
   var newName$1 = "Upgrader" + String(Game.time);
   console.log("Spawning new upgrader: ", newName$1);
-  Game.spawns["Spawn1"].spawnCreep([
+  spawn.spawnCreep([
         WORK,
         CARRY,
         MOVE
@@ -1800,9 +1800,9 @@ var minePos2 = {
   y: 22
 };
 
-function mine(param) {
+function mine(spawn) {
   var name1 = RoleMiner.minerName(minePos1);
-  Game.spawns["Spawn1"].spawnCreep([
+  spawn.spawnCreep([
         WORK,
         WORK,
         MOVE
@@ -1812,7 +1812,7 @@ function mine(param) {
         }
       });
   var name2 = RoleMiner.minerName(minePos2);
-  Game.spawns["Spawn1"].spawnCreep([
+  spawn.spawnCreep([
         WORK,
         WORK,
         MOVE
@@ -1834,9 +1834,43 @@ function mine(param) {
   
 }
 
+function build(spawn, n) {
+  var builders = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "builder";
+      });
+  if (builders.length < n) {
+    var newName = "Builder" + String(Game.time);
+    console.log("Spawning new Builder: ", newName);
+    spawn.spawnCreep([
+          WORK,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "builder"
+          }
+        });
+  }
+  var noConstructionSite = spawn.room.find(111).length === 0;
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "builder") {
+          if (noConstructionSite) {
+            return RoleUpgrader.roleUpgrader(creep);
+          } else {
+            return RoleBuilder.roleBuilder(creep);
+          }
+        }
+        
+      });
+  
+}
+
 function loop(param) {
-  mine();
-  spawnCreeps();
+  var spawn = Game.spawns["Spawn1"];
+  mine(spawn);
+  build(spawn, 2);
+  spawnCreeps(spawn);
   towerDefence();
   return dispatchTask();
 }
@@ -1847,8 +1881,10 @@ var dispatchTask_1 = Main_bs.dispatchTask = dispatchTask;
 var minePos1_1 = Main_bs.minePos1 = minePos1;
 var minePos2_1 = Main_bs.minePos2 = minePos2;
 var mine_1 = Main_bs.mine = mine;
+var build_1 = Main_bs.build = build;
 var loop_1 = Main_bs.loop = loop;
 
+exports.build = build_1;
 exports["default"] = Main_bs;
 exports.dispatchTask = dispatchTask_1;
 exports.loop = loop_1;
