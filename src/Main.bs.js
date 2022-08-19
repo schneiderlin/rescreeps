@@ -9,37 +9,22 @@ var RoleBuilder = require("./RoleBuilder.bs.js");
 var RoleRepairer = require("./RoleRepairer.bs.js");
 var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
+var RoleTransferer = require("./RoleTransferer.bs.js");
 
 function spawnCreeps(spawn) {
-  var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
-        return creep.memory.role === "harvester";
-      });
-  if (harvesters.length < 2) {
-    var newName = "Harvester" + String(Game.time);
-    console.log("Spawning new harvester: ", newName);
-    spawn.spawnCreep([
-          WORK,
-          CARRY,
-          MOVE
-        ], newName, {
-          memory: {
-            role: "harvester"
-          }
-        });
-  }
   var upgraders = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "upgrader";
       });
   if (upgraders.length >= 1) {
     return ;
   }
-  var newName$1 = "Upgrader" + String(Game.time);
-  console.log("Spawning new upgrader: ", newName$1);
+  var newName = "Upgrader" + String(Game.time);
+  console.log("Spawning new upgrader: ", newName);
   spawn.spawnCreep([
         WORK,
         CARRY,
         MOVE
-      ], newName$1, {
+      ], newName, {
         memory: {
           role: "upgrader"
         }
@@ -75,14 +60,8 @@ function towerDefence(param) {
 function dispatchTask(param) {
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
-        if (creep.memory.role === "harvester") {
-          RoleHarvester.roleHarvester(creep);
-        }
         if (creep.memory.role === "upgrader") {
-          RoleUpgrader.roleUpgrader(creep);
-        }
-        if (creep.memory.role === "builder") {
-          return RoleBuilder.roleBuilder(creep);
+          return RoleUpgrader.roleUpgrader(creep);
         }
         
       });
@@ -151,17 +130,18 @@ function build(spawn, n) {
         });
   }
   var hasConstructionSite = spawn.room.find(111).length > 0;
-  var hasDamagedStructure = spawn.room.find(107).filter(function (structure) {
-        return structure.hits < structure.hitsMax;
-      }).length > 0;
+  var hasDamagedStructure = RoleRepairer.findRepairTargets(spawn).length > 0;
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "builder") {
           if (hasConstructionSite) {
+            console.log("builder build");
             return RoleBuilder.roleBuilder(creep);
           } else if (hasDamagedStructure) {
-            return RoleRepairer.roleRepairer(creep);
+            console.log("builder repair");
+            return RoleRepairer.roleRepairer(spawn, creep);
           } else {
+            console.log("builder upgrade");
             return RoleUpgrader.roleUpgrader(creep);
           }
         }
@@ -170,8 +150,62 @@ function build(spawn, n) {
   
 }
 
+function transfer(spawn) {
+  var transferers = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "transferer";
+      });
+  if (transferers.length < 2) {
+    var newName = "Transferer" + String(Game.time);
+    spawn.spawnCreep([
+          CARRY,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "transferer"
+          }
+        });
+  }
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "transferer") {
+          return RoleTransferer.roleTransferer(creep);
+        }
+        
+      });
+  
+}
+
+function harvest(spawn) {
+  var harvesters = Js_dict.values(Game.creeps).filter(function (creep) {
+        return creep.memory.role === "harvester";
+      });
+  if (harvesters.length < 2) {
+    var newName = "Harvester" + String(Game.time);
+    console.log("Spawning new harvester: ", newName);
+    spawn.spawnCreep([
+          WORK,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "harvester"
+          }
+        });
+  }
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "harvester") {
+          return RoleHarvester.roleHarvester(creep);
+        }
+        
+      });
+  
+}
+
 function loop(param) {
   var spawn = Game.spawns["Spawn1"];
+  transfer(spawn);
   mine(spawn);
   build(spawn, 2);
   spawnCreeps(spawn);
@@ -186,5 +220,7 @@ exports.minePos1 = minePos1;
 exports.minePos2 = minePos2;
 exports.mine = mine;
 exports.build = build;
+exports.transfer = transfer;
+exports.harvest = harvest;
 exports.loop = loop;
 /* No side effect */

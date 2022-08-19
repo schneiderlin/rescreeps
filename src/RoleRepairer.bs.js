@@ -6,7 +6,17 @@ var Caml_array = require("rescript/lib/js/caml_array.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
 
-function roleRepairer(creep) {
+function findRepairTargets(spawn) {
+  return spawn.room.find(107).filter(function (structure) {
+              if (structure.hits < (structure.hitsMax - 2000 | 0)) {
+                return Caml_obj.caml_notequal(structure.structureType, STRUCTURE_WALL);
+              } else {
+                return false;
+              }
+            });
+}
+
+function roleRepairer(spawn, creep) {
   if (creep.memory.repairing && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
     creep.memory.repairing = false;
   }
@@ -14,14 +24,10 @@ function roleRepairer(creep) {
     creep.memory.repairing = true;
   }
   if (creep.memory.repairing) {
-    var closestDamagedStructure = creep.pos.findClosestByRange(107, {
-          filter: (function (structure) {
-              return structure.hits < structure.hitsMax;
-            })
-        });
+    var closestDamagedStructure = creep.pos.findClosestByRange(findRepairTargets(spawn));
     var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
-    if (Belt_Option.isSome(closestDamagedStructure$1)) {
-      creep.repair(closestDamagedStructure$1);
+    if (Belt_Option.isSome(closestDamagedStructure$1) && Caml_obj.caml_equal(creep.repair(closestDamagedStructure$1), ERR_NOT_IN_RANGE)) {
+      creep.moveTo(closestDamagedStructure$1.pos);
       return ;
     } else {
       return ;
@@ -35,5 +41,6 @@ function roleRepairer(creep) {
   
 }
 
+exports.findRepairTargets = findRepairTargets;
 exports.roleRepairer = roleRepairer;
 /* No side effect */

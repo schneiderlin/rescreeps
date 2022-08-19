@@ -1,19 +1,6 @@
 open Binding
 
 let spawnCreeps = spawn => {
-  let harvesters =
-    game.creeps
-    ->Js.Dict.values
-    ->Js.Array2.filter(creep => {
-      creep.memory.role == "harvester"
-    })
-
-  if harvesters->Js.Array2.length < 2 {
-    let newName = "Harvester" ++ game.time->Belt.Int.toString
-    Js.log2("Spawning new harvester: ", newName)
-    let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
-  }
-
   let upgraders =
     game.creeps
     ->Js.Dict.values
@@ -55,14 +42,8 @@ let dispatchTask = () => {
   ->Js.Dict.keys
   ->Js.Array2.forEach(name => {
     let creep = game.creeps->Js.Dict.unsafeGet(name)
-    if creep.memory.role == "harvester" {
-      RoleHarvester.roleHarvester(creep)
-    }
     if creep.memory.role == "upgrader" {
       RoleUpgrader.roleUpgrader(creep)
-    }
-    if creep.memory.role == "builder" {
-      RoleBuilder.roleBuilder(creep)
     }
   })
 }
@@ -117,11 +98,7 @@ let build = (spawn, n) => {
   // 房间里面有没有工地
   let hasConstructionSite = spawn["room"]->findConstructionSites->Js.Array2.length > 0
   // 房间里面有没有受损建筑
-  let hasDamagedStructure =
-    spawn["room"]
-    ->findStructures
-    ->Js.Array2.filter(structure => structure["hits"] < structure["hitsMax"])
-    ->Js.Array2.length > 0
+  let hasDamagedStructure = RoleRepairer.findRepairTargets(spawn)->Js.Array2.length > 0
 
   // 分配任务
   game.creeps
@@ -130,12 +107,62 @@ let build = (spawn, n) => {
     let creep = game.creeps->Js.Dict.unsafeGet(name)
     if creep.memory.role == "builder" {
       if hasConstructionSite {
+        Js.log("builder build")
         RoleBuilder.roleBuilder(creep)
       } else if hasDamagedStructure {
-        RoleRepairer.roleRepairer(creep)
+        Js.log("builder repair")
+        RoleRepairer.roleRepairer(spawn, creep)
       } else {
+        Js.log("builder upgrade")
         RoleUpgrader.roleUpgrader(creep)
       }
+    }
+  })
+}
+
+let transfer = spawn => {
+  let transferers =
+    game.creeps
+    ->Js.Dict.values
+    ->Js.Array2.filter(creep => {
+      creep.memory.role == "transferer"
+    })
+
+  if transferers->Js.Array2.length < 2 {
+    let newName = "Transferer" ++ game.time->Belt.Int.toString
+    let _ = spawn->spawnCreepOpts([carry, carry, move], newName, {"memory": {"role": "transferer"}})
+  }
+
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "transferer" {
+      RoleTransferer.roleTransferer(creep)
+    }
+  })
+}
+
+let harvest = spawn => {
+  let harvesters =
+    game.creeps
+    ->Js.Dict.values
+    ->Js.Array2.filter(creep => {
+      creep.memory.role == "harvester"
+    })
+
+  if harvesters->Js.Array2.length < 2 {
+    let newName = "Harvester" ++ game.time->Belt.Int.toString
+    Js.log2("Spawning new harvester: ", newName)
+    let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "harvester"}})
+  }
+
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "harvester" {
+      RoleHarvester.roleHarvester(creep)
     }
   })
 }
@@ -143,6 +170,7 @@ let build = (spawn, n) => {
 let loop = () => {
   let spawn = game.spawns->Js.Dict.unsafeGet("Spawn1")
 
+  transfer(spawn)
   mine(spawn)
   build(spawn, 2)
   spawnCreeps(spawn)
