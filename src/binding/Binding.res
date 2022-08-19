@@ -82,7 +82,8 @@ type memory = {
   creeps: Js.Dict.t<string>,
   role: string,
   mutable building: bool,
-  mutable upgrading: bool
+  mutable upgrading: bool,
+  mutable repairing: bool
 }
 
 type resource = {pos: roomPosition, amount: int}

@@ -6,6 +6,7 @@ var RoleMiner = require("./RoleMiner.bs.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
 var RoleBuilder = require("./RoleBuilder.bs.js");
+var RoleRepairer = require("./RoleRepairer.bs.js");
 var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 
@@ -149,14 +150,19 @@ function build(spawn, n) {
           }
         });
   }
-  var noConstructionSite = spawn.room.find(111).length === 0;
+  var hasConstructionSite = spawn.room.find(111).length > 0;
+  var hasDamagedStructure = spawn.room.find(107).filter(function (structure) {
+        return structure.hits < structure.hitsMax;
+      }).length > 0;
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "builder") {
-          if (noConstructionSite) {
-            return RoleUpgrader.roleUpgrader(creep);
-          } else {
+          if (hasConstructionSite) {
             return RoleBuilder.roleBuilder(creep);
+          } else if (hasDamagedStructure) {
+            return RoleRepairer.roleRepairer(creep);
+          } else {
+            return RoleUpgrader.roleUpgrader(creep);
           }
         }
         

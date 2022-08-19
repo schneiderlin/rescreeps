@@ -115,7 +115,13 @@ let build = (spawn, n) => {
   }
 
   // 房间里面有没有工地
-  let noConstructionSite = spawn["room"]->findConstructionSites->Js.Array2.length == 0
+  let hasConstructionSite = spawn["room"]->findConstructionSites->Js.Array2.length > 0
+  // 房间里面有没有受损建筑
+  let hasDamagedStructure =
+    spawn["room"]
+    ->findStructures
+    ->Js.Array2.filter(structure => structure["hits"] < structure["hitsMax"])
+    ->Js.Array2.length > 0
 
   // 分配任务
   game.creeps
@@ -123,10 +129,12 @@ let build = (spawn, n) => {
   ->Js.Array2.forEach(name => {
     let creep = game.creeps->Js.Dict.unsafeGet(name)
     if creep.memory.role == "builder" {
-      if noConstructionSite {
-        RoleUpgrader.roleUpgrader(creep)
-      } else {
+      if hasConstructionSite {
         RoleBuilder.roleBuilder(creep)
+      } else if hasDamagedStructure {
+        RoleRepairer.roleRepairer(creep)
+      } else {
+        RoleUpgrader.roleUpgrader(creep)
       }
     }
   })
