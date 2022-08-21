@@ -3,6 +3,8 @@
 
 var Caml_obj = require("rescript/lib/js/caml_obj.js");
 var Caml_array = require("rescript/lib/js/caml_array.js");
+var Belt_Option = require("rescript/lib/js/belt_Option.js");
+var Caml_option = require("rescript/lib/js/caml_option.js");
 
 function roleBuilder(creep) {
   if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
@@ -22,12 +24,16 @@ function roleBuilder(creep) {
       return ;
     }
   }
-  var resources = creep.room.find(106);
-  if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 1)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array.get(resources, 1).pos);
-    return ;
-  }
-  
+  var resource = creep.pos.findClosestByPath(creep.room.find(106).filter(function (r) {
+            return r.amount > 300;
+          }));
+  return Belt_Option.forEach((resource == null) ? undefined : Caml_option.some(resource), (function (r) {
+                if (Caml_obj.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
+                  creep.moveTo(r.pos);
+                  return ;
+                }
+                
+              }));
 }
 
 exports.roleBuilder = roleBuilder;

@@ -89,11 +89,11 @@ caml_option.isNested = isNested;
 caml_option.option_get = option_get;
 caml_option.option_unwrap = option_unwrap;
 
-var Caml_option$6 = caml_option;
+var Caml_option$7 = caml_option;
 
 function get$1(dict, k) {
   if ((k in dict)) {
-    return Caml_option$6.some(dict[k]);
+    return Caml_option$7.some(dict[k]);
   }
   
 }
@@ -1431,10 +1431,10 @@ curry._8 = _8;
 curry.__8 = __8;
 
 var Curry = curry;
-var Caml_option$5 = caml_option;
+var Caml_option$6 = caml_option;
 
 function keepU(opt, p) {
-  if (opt !== undefined && p(Caml_option$5.valFromOption(opt))) {
+  if (opt !== undefined && p(Caml_option$6.valFromOption(opt))) {
     return opt;
   }
   
@@ -1446,7 +1446,7 @@ function keep(opt, p) {
 
 function forEachU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$5.valFromOption(opt));
+    return f(Caml_option$6.valFromOption(opt));
   }
   
 }
@@ -1457,7 +1457,7 @@ function forEach(opt, f) {
 
 function getExn(x) {
   if (x !== undefined) {
-    return Caml_option$5.valFromOption(x);
+    return Caml_option$6.valFromOption(x);
   }
   throw {
         RE_EXN_ID: "Not_found",
@@ -1467,7 +1467,7 @@ function getExn(x) {
 
 function mapWithDefaultU(opt, $$default, f) {
   if (opt !== undefined) {
-    return f(Caml_option$5.valFromOption(opt));
+    return f(Caml_option$6.valFromOption(opt));
   } else {
     return $$default;
   }
@@ -1479,7 +1479,7 @@ function mapWithDefault(opt, $$default, f) {
 
 function mapU(opt, f) {
   if (opt !== undefined) {
-    return Caml_option$5.some(f(Caml_option$5.valFromOption(opt)));
+    return Caml_option$6.some(f(Caml_option$6.valFromOption(opt)));
   }
   
 }
@@ -1490,7 +1490,7 @@ function map(opt, f) {
 
 function flatMapU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$5.valFromOption(opt));
+    return f(Caml_option$6.valFromOption(opt));
   }
   
 }
@@ -1501,7 +1501,7 @@ function flatMap(opt, f) {
 
 function getWithDefault(opt, $$default) {
   if (opt !== undefined) {
-    return Caml_option$5.valFromOption(opt);
+    return Caml_option$6.valFromOption(opt);
   } else {
     return $$default;
   }
@@ -1518,7 +1518,7 @@ function isNone(x) {
 function eqU(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$5.valFromOption(a), Caml_option$5.valFromOption(b));
+      return f(Caml_option$6.valFromOption(a), Caml_option$6.valFromOption(b));
     } else {
       return false;
     }
@@ -1534,7 +1534,7 @@ function eq(a, b, f) {
 function cmpU(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$5.valFromOption(a), Caml_option$5.valFromOption(b));
+      return f(Caml_option$6.valFromOption(a), Caml_option$6.valFromOption(b));
     } else {
       return 1;
     }
@@ -1569,8 +1569,8 @@ belt_Option.cmpU = cmpU;
 belt_Option.cmp = cmp;
 
 var Caml_obj$5 = caml_obj;
-var Belt_Option$5 = belt_Option;
-var Caml_option$4 = caml_option;
+var Belt_Option$6 = belt_Option;
+var Caml_option$5 = caml_option;
 
 function samePosition(p1, p2) {
   if (Caml_obj$5.caml_equal(p1.x, p2.x)) {
@@ -1589,9 +1589,9 @@ function roleMiner(creep, minePos) {
     console.log("miner working", creep.name);
     var sources = creep.room.find(105);
     var source = creep.pos.findClosestByPath(sources);
-    var source$1 = (source == null) ? undefined : Caml_option$4.some(source);
+    var source$1 = (source == null) ? undefined : Caml_option$5.some(source);
     console.log(sources, source$1);
-    return Belt_Option$5.forEach(source$1, (function (s) {
+    return Belt_Option$6.forEach(source$1, (function (s) {
                   if (Caml_obj$5.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
                     creep.moveTo(s.pos);
                     return ;
@@ -1612,6 +1612,8 @@ var RoleBuilder_bs = {};
 
 var Caml_obj$4 = caml_obj;
 var Caml_array$3 = caml_array;
+var Belt_Option$5 = belt_Option;
+var Caml_option$4 = caml_option;
 
 function roleBuilder(creep) {
   if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
@@ -1631,12 +1633,16 @@ function roleBuilder(creep) {
       return ;
     }
   }
-  var resources = creep.room.find(106);
-  if (Caml_obj$4.caml_equal(creep.pickup(Caml_array$3.get(resources, 1)), ERR_NOT_IN_RANGE)) {
-    creep.moveTo(Caml_array$3.get(resources, 1).pos);
-    return ;
-  }
-  
+  var resource = creep.pos.findClosestByPath(creep.room.find(106).filter(function (r) {
+            return r.amount > 300;
+          }));
+  return Belt_Option$5.forEach((resource == null) ? undefined : Caml_option$4.some(resource), (function (r) {
+                if (Caml_obj$4.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
+                  creep.moveTo(r.pos);
+                  return ;
+                }
+                
+              }));
 }
 
 RoleBuilder_bs.roleBuilder = roleBuilder;

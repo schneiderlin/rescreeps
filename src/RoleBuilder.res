@@ -22,9 +22,14 @@ let roleBuilder = (creep: creep) => {
     }
   } else {
     // 拿资源
-    let resources = creep.room->findDroppedResources
-    if creep->pickup(resources[1]) == errNotInRange {
-      let _ = creep->moveTo(resources[1].pos)
-    }
+    let resource =
+      creep.pos->findClosestByPathResource(
+        creep.room->findDroppedResources->Js.Array2.filter(r => r.amount > 300),
+      )
+    resource->Belt.Option.forEach(r => {
+      if creep->pickup(r) == errNotInRange {
+        let _ = creep->moveTo(r.pos)
+      }
+    })
   }
 }
