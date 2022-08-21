@@ -29,8 +29,11 @@ let roleTransferer = (creep: creep) => {
     // 找出 [structureExtension, structureSpawn] 类型的建筑, 搬运
     let hasTask = findAndTransfer(creep, allStructures, [structureExtension, structureSpawn])
     if !hasTask {
-      // 如果没有上述的搬运任务, 再找 [structureContainerC] 类型的搬运任务
-      let _ = findAndTransfer(creep, allStructures, [structureContainerC])
+      let hasTask = findAndTransfer(creep, allStructures, [structureTower])
+      if !hasTask {
+        // 如果没有上述的搬运任务, 再找 [structureContainerC] 类型的搬运任务
+        let _ = findAndTransfer(creep, allStructures, [structureContainerC])
+      }
     }
   }
 }

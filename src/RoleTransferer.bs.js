@@ -41,7 +41,11 @@ function roleTransferer(creep) {
         STRUCTURE_EXTENSION,
         STRUCTURE_SPAWN
       ]);
-  if (!hasTask) {
+  if (hasTask) {
+    return ;
+  }
+  var hasTask$1 = findAndTransfer(creep, allStructures, [STRUCTURE_TOWER]);
+  if (!hasTask$1) {
     findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
     return ;
   }

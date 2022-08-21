@@ -61,10 +61,10 @@ let minePos2 = {
 let mine = spawn => {
   // 生成
   let name1 = RoleMiner.minerName(minePos1)
-  let _ = spawn->spawnCreepOpts([work, work, move], name1, {"memory": {"role": "miner1"}})
+  let _ = spawn->spawnCreepOpts([work, work, work, move], name1, {"memory": {"role": "miner1"}})
 
   let name2 = RoleMiner.minerName(minePos2)
-  let _ = spawn->spawnCreepOpts([work, work, move], name2, {"memory": {"role": "miner2"}})
+  let _ = spawn->spawnCreepOpts([work, work, work, move], name2, {"memory": {"role": "miner2"}})
 
   // 分配任务
   game.creeps
@@ -92,7 +92,7 @@ let build = (spawn, n) => {
   if builders->Js.Array2.length < n {
     let newName = "Builder" ++ game.time->Belt.Int.toString
     Js.log2("Spawning new Builder: ", newName)
-    let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "builder"}})
+    let _ = spawn->spawnCreepOpts([work, work, carry, move], newName, {"memory": {"role": "builder"}})
   }
 
   // 房间里面有没有工地
@@ -130,7 +130,7 @@ let transfer = spawn => {
 
   if transferers->Js.Array2.length < 2 {
     let newName = "Transferer" ++ game.time->Belt.Int.toString
-    let _ = spawn->spawnCreepOpts([carry, carry, move], newName, {"memory": {"role": "transferer"}})
+    let _ = spawn->spawnCreepOpts([carry, carry, carry, move], newName, {"memory": {"role": "transferer"}})
   }
 
   game.creeps
@@ -172,7 +172,7 @@ let loop = () => {
 
   transfer(spawn)
   mine(spawn)
-  build(spawn, 2)
+  build(spawn, 3)
   spawnCreeps(spawn)
   towerDefence()
   dispatchTask()

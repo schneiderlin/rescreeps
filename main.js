@@ -1888,7 +1888,11 @@ function roleTransferer(creep) {
         STRUCTURE_EXTENSION,
         STRUCTURE_SPAWN
       ]);
-  if (!hasTask) {
+  if (hasTask) {
+    return ;
+  }
+  var hasTask$1 = findAndTransfer(creep, allStructures, [STRUCTURE_TOWER]);
+  if (!hasTask$1) {
     findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
     return ;
   }
@@ -1980,6 +1984,7 @@ function mine(spawn) {
   spawn.spawnCreep([
         WORK,
         WORK,
+        WORK,
         MOVE
       ], name1, {
         memory: {
@@ -1988,6 +1993,7 @@ function mine(spawn) {
       });
   var name2 = RoleMiner.minerName(minePos2);
   spawn.spawnCreep([
+        WORK,
         WORK,
         WORK,
         MOVE
@@ -2017,6 +2023,7 @@ function build(spawn, n) {
     var newName = "Builder" + String(Game.time);
     console.log("Spawning new Builder: ", newName);
     spawn.spawnCreep([
+          WORK,
           WORK,
           CARRY,
           MOVE
@@ -2054,6 +2061,7 @@ function transfer(spawn) {
   if (transferers.length < 2) {
     var newName = "Transferer" + String(Game.time);
     spawn.spawnCreep([
+          CARRY,
           CARRY,
           CARRY,
           MOVE
@@ -2104,7 +2112,7 @@ function loop(param) {
   var spawn = Game.spawns["Spawn1"];
   transfer(spawn);
   mine(spawn);
-  build(spawn, 2);
+  build(spawn, 3);
   spawnCreeps(spawn);
   towerDefence();
   return dispatchTask();
