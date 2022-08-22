@@ -19,9 +19,12 @@ let findAndTransfer = (creep, allStructures, structureTypes) => {
 let roleTransferer = (creep: creep) => {
   if creep.store->getFreeCapacityE(resourceEnergy) > 0 {
     let resources = creep.room->findDroppedResources
-    if creep->pickup(resources[0]) == errNotInRange {
-      let _ = creep->moveTo(resources[0].pos)
-    }
+    let resource = Belt.Array.get(resources, 0)
+    resource->Belt.Option.forEach(r => {
+      if creep->pickup(r) == errNotInRange {
+        let _ = creep->moveTo(r.pos)
+      }
+    })
   } else {
     // 所有建筑找出来
     let allStructures = creep.room->findStructures

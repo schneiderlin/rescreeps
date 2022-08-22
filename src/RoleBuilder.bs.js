@@ -9,11 +9,9 @@ var Caml_option = require("rescript/lib/js/caml_option.js");
 function roleBuilder(creep) {
   if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
     creep.memory.building = false;
-    creep.say("\xf0\x9f\x94\x84 harvest");
   }
   if (!creep.memory.building && creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
     creep.memory.building = true;
-    creep.say("\xf0\x9f\x9a\xa7 build");
   }
   if (creep.memory.building) {
     var targets = creep.room.find(111);
@@ -25,7 +23,7 @@ function roleBuilder(creep) {
     }
   }
   var resource = creep.pos.findClosestByPath(creep.room.find(106).filter(function (r) {
-            return r.amount > 300;
+            return r.amount > 100;
           }));
   return Belt_Option.forEach((resource == null) ? undefined : Caml_option.some(resource), (function (r) {
                 if (Caml_obj.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {

@@ -2,6 +2,7 @@
 'use strict';
 
 var Caml_obj = require("rescript/lib/js/caml_obj.js");
+var Belt_Array = require("rescript/lib/js/belt_Array.js");
 var Caml_array = require("rescript/lib/js/caml_array.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
@@ -29,12 +30,14 @@ function findAndTransfer(creep, allStructures, structureTypes) {
 function roleTransferer(creep) {
   if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
     var resources = creep.room.find(106);
-    if (Caml_obj.caml_equal(creep.pickup(Caml_array.get(resources, 0)), ERR_NOT_IN_RANGE)) {
-      creep.moveTo(Caml_array.get(resources, 0).pos);
-      return ;
-    } else {
-      return ;
-    }
+    var resource = Belt_Array.get(resources, 0);
+    return Belt_Option.forEach(resource, (function (r) {
+                  if (Caml_obj.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
+                    creep.moveTo(r.pos);
+                    return ;
+                  }
+                  
+                }));
   }
   var allStructures = creep.room.find(107);
   var hasTask = findAndTransfer(creep, allStructures, [

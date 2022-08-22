@@ -4,11 +4,9 @@ let roleBuilder = (creep: creep) => {
   // 判断 building 状态
   if creep.memory.building && creep.store->getUsedCapacityE(resourceEnergy) == 0 {
     creep.memory.building = false
-    creep->say("🔄 harvest")
   }
   if !creep.memory.building && creep.store->getFreeCapacityE(resourceEnergy) == 0 {
     creep.memory.building = true
-    creep->say("🚧 build")
   }
 
   // 根据 building 状态分配行为
@@ -24,7 +22,7 @@ let roleBuilder = (creep: creep) => {
     // 拿资源
     let resource =
       creep.pos->findClosestByPathResource(
-        creep.room->findDroppedResources->Js.Array2.filter(r => r.amount > 300),
+        creep.room->findDroppedResources->Js.Array2.filter(r => r.amount > 100),
       )
     resource->Belt.Option.forEach(r => {
       if creep->pickup(r) == errNotInRange {

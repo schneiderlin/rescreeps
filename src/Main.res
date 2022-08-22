@@ -1,6 +1,6 @@
 open Binding
 
-let spawnCreeps = spawn => {
+let upgraders = spawn => {
   let upgraders =
     game.creeps
     ->Js.Dict.values
@@ -15,16 +15,13 @@ let spawnCreeps = spawn => {
   }
 }
 
-let towerDefence = () => {
-  let towerOpt = game->getTowerById("ad88e3fc2859f93aa703b852")
+let towerDefence = (spawn) => {
+  let towerOpt = game->getTowerById("630033cd4bcfd152983bccab")
   if towerOpt->Belt.Option.isSome {
     let tower = towerOpt->Belt.Option.getUnsafe
 
-    // 修墙
-    let closestDamagedStructure = tower.pos->findClosestStructureByRangeOpt({
-      "filter": (structure: structure) => structure["hits"] < structure["hitsMax"],
-    })
-    Js.log(closestDamagedStructure)
+    // 维修
+    let closestDamagedStructure = tower.pos->findClosestByRangeStructure(spawn->RoleRepairer.findRepairTargets)
     if closestDamagedStructure->Belt.Option.isSome {
       let _ = tower->repairT(closestDamagedStructure->Belt.Option.getUnsafe)
     }
@@ -58,13 +55,26 @@ let minePos2 = {
   "y": 22,
 }
 
-let mine = spawn => {
+let mine = (room, spawn) => {
+  let energy = room["energyAvailable"]
+  let bodies = if energy <= 300 {
+    [work, work, move]
+  } else {
+    [work, work, work, move]
+  }
+
   // 生成
   let name1 = RoleMiner.minerName(minePos1)
-  let _ = spawn->spawnCreepOpts([work, work, work, move], name1, {"memory": {"role": "miner1"}})
+  let err1 = spawn->spawnCreepOpts(bodies, name1, {"memory": {"role": "miner1"}})
+  if err1 == errNotEnoughEnergy {
+    Js.log("miner no energy")
+  }
 
   let name2 = RoleMiner.minerName(minePos2)
-  let _ = spawn->spawnCreepOpts([work, work, work, move], name2, {"memory": {"role": "miner2"}})
+  let err2 = spawn->spawnCreepOpts(bodies, name2, {"memory": {"role": "miner2"}})
+  if err2 == errNotEnoughEnergy {
+    Js.log("miner no energy")
+  }
 
   // 分配任务
   game.creeps
@@ -92,7 +102,8 @@ let build = (spawn, n) => {
   if builders->Js.Array2.length < n {
     let newName = "Builder" ++ game.time->Belt.Int.toString
     Js.log2("Spawning new Builder: ", newName)
-    let _ = spawn->spawnCreepOpts([work, work, carry, move], newName, {"memory": {"role": "builder"}})
+    let _ =
+      spawn->spawnCreepOpts([work, work, carry, move], newName, {"memory": {"role": "builder"}})
   }
 
   // 房间里面有没有工地
@@ -106,12 +117,12 @@ let build = (spawn, n) => {
   ->Js.Array2.forEach(name => {
     let creep = game.creeps->Js.Dict.unsafeGet(name)
     if creep.memory.role == "builder" {
-      if hasConstructionSite {
-        Js.log("builder build")
-        RoleBuilder.roleBuilder(creep)
-      } else if hasDamagedStructure {
+      if hasDamagedStructure {
         Js.log("builder repair")
         RoleRepairer.roleRepairer(spawn, creep)
+      } else if hasConstructionSite {
+        Js.log("builder build")
+        RoleBuilder.roleBuilder(creep)
       } else {
         Js.log("builder upgrade")
         RoleUpgrader.roleUpgrader(creep)
@@ -130,7 +141,12 @@ let transfer = spawn => {
 
   if transferers->Js.Array2.length < 2 {
     let newName = "Transferer" ++ game.time->Belt.Int.toString
-    let _ = spawn->spawnCreepOpts([carry, carry, carry, move], newName, {"memory": {"role": "transferer"}})
+    let _ =
+      spawn->spawnCreepOpts(
+        [carry, carry, carry, move],
+        newName,
+        {"memory": {"role": "transferer"}},
+      )
   }
 
   game.creeps
@@ -169,11 +185,15 @@ let harvest = spawn => {
 
 let loop = () => {
   let spawn = game.spawns->Js.Dict.unsafeGet("Spawn1")
+  let room = spawn["room"]
 
+  Js.log("transfer")
   transfer(spawn)
-  mine(spawn)
+  Js.log("mine")
+  mine(room, spawn)
+  Js.log("build")
   build(spawn, 3)
-  spawnCreeps(spawn)
+  upgraders(spawn)
   towerDefence()
   dispatchTask()
 }

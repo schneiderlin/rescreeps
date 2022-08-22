@@ -2,6 +2,7 @@
 'use strict';
 
 var Js_dict = require("rescript/lib/js/js_dict.js");
+var Caml_obj = require("rescript/lib/js/caml_obj.js");
 var RoleMiner = require("./RoleMiner.bs.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
@@ -11,11 +12,11 @@ var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 var RoleTransferer = require("./RoleTransferer.bs.js");
 
-function spawnCreeps(spawn) {
-  var upgraders = Js_dict.values(Game.creeps).filter(function (creep) {
+function upgraders(spawn) {
+  var upgraders$1 = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "upgrader";
       });
-  if (upgraders.length >= 1) {
+  if (upgraders$1.length >= 1) {
     return ;
   }
   var newName = "Upgrader" + String(Game.time);
@@ -33,7 +34,7 @@ function spawnCreeps(spawn) {
 }
 
 function towerDefence(param) {
-  var towerOpt = Game.getObjectById("ad88e3fc2859f93aa703b852");
+  var towerOpt = Game.getObjectById("630033cd4bcfd152983bccab");
   var towerOpt$1 = (towerOpt == null) ? undefined : Caml_option.some(towerOpt);
   if (!Belt_Option.isSome(towerOpt$1)) {
     return ;
@@ -44,7 +45,6 @@ function towerDefence(param) {
           })
       });
   var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
-  console.log(closestDamagedStructure$1);
   if (Belt_Option.isSome(closestDamagedStructure$1)) {
     towerOpt$1.repair(closestDamagedStructure$1);
   }
@@ -78,29 +78,36 @@ var minePos2 = {
   y: 22
 };
 
-function mine(spawn) {
+function mine(room, spawn) {
+  var energy = room.energyAvailable;
+  var bodies = energy <= 300 ? [
+      WORK,
+      WORK,
+      MOVE
+    ] : [
+      WORK,
+      WORK,
+      WORK,
+      MOVE
+    ];
   var name1 = RoleMiner.minerName(minePos1);
-  spawn.spawnCreep([
-        WORK,
-        WORK,
-        WORK,
-        MOVE
-      ], name1, {
+  var err1 = spawn.spawnCreep(bodies, name1, {
         memory: {
           role: "miner1"
         }
       });
+  if (Caml_obj.caml_equal(err1, ERR_NOT_ENOUGH_ENERGY)) {
+    console.log("miner no energy");
+  }
   var name2 = RoleMiner.minerName(minePos2);
-  spawn.spawnCreep([
-        WORK,
-        WORK,
-        WORK,
-        MOVE
-      ], name2, {
+  var err2 = spawn.spawnCreep(bodies, name2, {
         memory: {
           role: "miner2"
         }
       });
+  if (Caml_obj.caml_equal(err2, ERR_NOT_ENOUGH_ENERGY)) {
+    console.log("miner no energy");
+  }
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "miner1") {
@@ -137,12 +144,12 @@ function build(spawn, n) {
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "builder") {
-          if (hasConstructionSite) {
-            console.log("builder build");
-            return RoleBuilder.roleBuilder(creep);
-          } else if (hasDamagedStructure) {
+          if (hasDamagedStructure) {
             console.log("builder repair");
             return RoleRepairer.roleRepairer(spawn, creep);
+          } else if (hasConstructionSite) {
+            console.log("builder build");
+            return RoleBuilder.roleBuilder(creep);
           } else {
             console.log("builder upgrade");
             return RoleUpgrader.roleUpgrader(creep);
@@ -209,15 +216,19 @@ function harvest(spawn) {
 
 function loop(param) {
   var spawn = Game.spawns["Spawn1"];
+  var room = spawn.room;
+  console.log("transfer");
   transfer(spawn);
-  mine(spawn);
+  console.log("mine");
+  mine(room, spawn);
+  console.log("build");
   build(spawn, 3);
-  spawnCreeps(spawn);
+  upgraders(spawn);
   towerDefence(undefined);
   return dispatchTask(undefined);
 }
 
-exports.spawnCreeps = spawnCreeps;
+exports.upgraders = upgraders;
 exports.towerDefence = towerDefence;
 exports.dispatchTask = dispatchTask;
 exports.minePos1 = minePos1;
