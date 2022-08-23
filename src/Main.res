@@ -194,6 +194,6 @@ let loop = () => {
   Js.log("build")
   build(spawn, 3)
   upgraders(spawn)
-  towerDefence()
+  towerDefence(spawn)
   dispatchTask()
 }

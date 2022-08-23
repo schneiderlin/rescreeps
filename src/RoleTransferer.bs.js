@@ -48,8 +48,12 @@ function roleTransferer(creep) {
     return ;
   }
   var hasTask$1 = findAndTransfer(creep, allStructures, [STRUCTURE_TOWER]);
-  if (!hasTask$1) {
-    findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
+  if (hasTask$1) {
+    return ;
+  }
+  var hasTask$2 = findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
+  if (!hasTask$2) {
+    findAndTransfer(creep, allStructures, [STRUCTURE_STORAGE]);
     return ;
   }
   

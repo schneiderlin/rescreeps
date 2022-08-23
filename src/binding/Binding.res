@@ -3,21 +3,14 @@ type structureType
 @val external structureSpawn: structureType = "STRUCTURE_SPAWN"
 @val external structureTower: structureType = "STRUCTURE_TOWER"
 @val external structureRoad: structureType = "STRUCTURE_ROAD"
+@val external structureStorage: structureType = "STRUCTURE_STORAGE"
 @val external structureContainerC: structureType = "STRUCTURE_CONTAINER"
 @val external structureWall: structureType = "STRUCTURE_WALL"
 @val external structureRampart: structureType = "STRUCTURE_RAMPART"
-
-type bodyPart
-@val external work: bodyPart = "WORK"
-@val external carry: bodyPart = "CARRY"
-@val external move: bodyPart = "MOVE"
-
 // STRUCTURE_KEEPER_LAIR: "keeperLair",
 // STRUCTURE_PORTAL: "portal",
 // STRUCTURE_CONTROLLER: "controller",
 // STRUCTURE_LINK: "link",
-// STRUCTURE_STORAGE: "storage",
-// STRUCTURE_TOWER: "tower",
 // STRUCTURE_OBSERVER: "observer",
 // STRUCTURE_POWER_BANK: "powerBank",
 // STRUCTURE_POWER_SPAWN: "powerSpawn",
@@ -27,6 +20,12 @@ type bodyPart
 // STRUCTURE_NUKER: "nuker",
 // STRUCTURE_FACTORY: "factory",
 // STRUCTURE_INVADER_CORE: "invaderCore",
+
+
+type bodyPart
+@val external work: bodyPart = "WORK"
+@val external carry: bodyPart = "CARRY"
+@val external move: bodyPart = "MOVE"
 
 type roomPosition = {"x": int, "y": int, "roomName": string}
 type store = {"dummy": int}

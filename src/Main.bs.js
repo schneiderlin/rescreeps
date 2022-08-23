@@ -33,17 +33,13 @@ function upgraders(spawn) {
   
 }
 
-function towerDefence(param) {
+function towerDefence(spawn) {
   var towerOpt = Game.getObjectById("630033cd4bcfd152983bccab");
   var towerOpt$1 = (towerOpt == null) ? undefined : Caml_option.some(towerOpt);
   if (!Belt_Option.isSome(towerOpt$1)) {
     return ;
   }
-  var closestDamagedStructure = towerOpt$1.pos.findClosestByRange(107, {
-        filter: (function (structure) {
-            return structure.hits < structure.hitsMax;
-          })
-      });
+  var closestDamagedStructure = towerOpt$1.pos.findClosestByRange(RoleRepairer.findRepairTargets(spawn));
   var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
   if (Belt_Option.isSome(closestDamagedStructure$1)) {
     towerOpt$1.repair(closestDamagedStructure$1);
@@ -224,7 +220,7 @@ function loop(param) {
   console.log("build");
   build(spawn, 3);
   upgraders(spawn);
-  towerDefence(undefined);
+  towerDefence(spawn);
   return dispatchTask(undefined);
 }
 
