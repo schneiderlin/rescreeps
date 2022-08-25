@@ -16,19 +16,25 @@ function upgraders(spawn) {
   var upgraders$1 = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "upgrader";
       });
-  if (upgraders$1.length >= 1) {
-    return ;
+  if (upgraders$1.length < 1) {
+    var newName = "Upgrader" + String(Game.time);
+    console.log("Spawning new upgrader: ", newName);
+    spawn.spawnCreep([
+          WORK,
+          CARRY,
+          MOVE
+        ], newName, {
+          memory: {
+            role: "upgrader"
+          }
+        });
   }
-  var newName = "Upgrader" + String(Game.time);
-  console.log("Spawning new upgrader: ", newName);
-  spawn.spawnCreep([
-        WORK,
-        CARRY,
-        MOVE
-      ], newName, {
-        memory: {
-          role: "upgrader"
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "upgrader") {
+          return RoleUpgrader.roleUpgrader(creep);
         }
+        
       });
   
 }
@@ -53,17 +59,6 @@ function towerDefence(spawn) {
   
 }
 
-function dispatchTask(param) {
-  Object.keys(Game.creeps).forEach(function (name) {
-        var creep = Game.creeps[name];
-        if (creep.memory.role === "upgrader") {
-          return RoleUpgrader.roleUpgrader(creep);
-        }
-        
-      });
-  
-}
-
 var minePos1 = {
   x: 5,
   y: 16
@@ -81,6 +76,7 @@ function mine(room, spawn) {
       WORK,
       MOVE
     ] : [
+      WORK,
       WORK,
       WORK,
       WORK,
@@ -127,7 +123,9 @@ function build(spawn, n) {
     spawn.spawnCreep([
           WORK,
           WORK,
+          WORK,
           CARRY,
+          MOVE,
           MOVE
         ], newName, {
           memory: {
@@ -166,6 +164,8 @@ function transfer(spawn) {
           CARRY,
           CARRY,
           CARRY,
+          CARRY,
+          MOVE,
           MOVE
         ], newName, {
           memory: {
@@ -213,20 +213,15 @@ function harvest(spawn) {
 function loop(param) {
   var spawn = Game.spawns["Spawn1"];
   var room = spawn.room;
-  console.log("transfer");
   transfer(spawn);
-  console.log("mine");
   mine(room, spawn);
-  console.log("build");
   build(spawn, 3);
   upgraders(spawn);
-  towerDefence(spawn);
-  return dispatchTask(undefined);
+  return towerDefence(spawn);
 }
 
 exports.upgraders = upgraders;
 exports.towerDefence = towerDefence;
-exports.dispatchTask = dispatchTask;
 exports.minePos1 = minePos1;
 exports.minePos2 = minePos2;
 exports.mine = mine;

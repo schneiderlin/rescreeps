@@ -13,15 +13,25 @@ let upgraders = spawn => {
     Js.log2("Spawning new upgrader: ", newName)
     let _ = spawn->spawnCreepOpts([work, carry, move], newName, {"memory": {"role": "upgrader"}})
   }
+
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "upgrader" {
+      RoleUpgrader.roleUpgrader(creep)
+    }
+  })
 }
 
-let towerDefence = (spawn) => {
+let towerDefence = spawn => {
   let towerOpt = game->getTowerById("630033cd4bcfd152983bccab")
   if towerOpt->Belt.Option.isSome {
     let tower = towerOpt->Belt.Option.getUnsafe
 
     // 维修
-    let closestDamagedStructure = tower.pos->findClosestByRangeStructure(spawn->RoleRepairer.findRepairTargets)
+    let closestDamagedStructure =
+      tower.pos->findClosestByRangeStructure(spawn->RoleRepairer.findRepairTargets)
     if closestDamagedStructure->Belt.Option.isSome {
       let _ = tower->repairT(closestDamagedStructure->Belt.Option.getUnsafe)
     }
@@ -32,17 +42,6 @@ let towerDefence = (spawn) => {
       let _ = tower->attackT(closestHostile->Belt.Option.getUnsafe)
     }
   }
-}
-
-let dispatchTask = () => {
-  game.creeps
-  ->Js.Dict.keys
-  ->Js.Array2.forEach(name => {
-    let creep = game.creeps->Js.Dict.unsafeGet(name)
-    if creep.memory.role == "upgrader" {
-      RoleUpgrader.roleUpgrader(creep)
-    }
-  })
 }
 
 let minePos1 = {
@@ -60,7 +59,7 @@ let mine = (room, spawn) => {
   let bodies = if energy <= 300 {
     [work, work, move]
   } else {
-    [work, work, work, move]
+    [work, work, work, work, move]
   }
 
   // 生成
@@ -103,7 +102,11 @@ let build = (spawn, n) => {
     let newName = "Builder" ++ game.time->Belt.Int.toString
     Js.log2("Spawning new Builder: ", newName)
     let _ =
-      spawn->spawnCreepOpts([work, work, carry, move], newName, {"memory": {"role": "builder"}})
+      spawn->spawnCreepOpts(
+        [work, work, work, carry, move, move],
+        newName,
+        {"memory": {"role": "builder"}},
+      )
   }
 
   // 房间里面有没有工地
@@ -143,7 +146,7 @@ let transfer = spawn => {
     let newName = "Transferer" ++ game.time->Belt.Int.toString
     let _ =
       spawn->spawnCreepOpts(
-        [carry, carry, carry, move],
+        [carry, carry, carry, carry, move, move],
         newName,
         {"memory": {"role": "transferer"}},
       )
@@ -157,6 +160,18 @@ let transfer = spawn => {
       RoleTransferer.roleTransferer(creep)
     }
   })
+
+  // game.creeps->Js.Dict.keys->Js.Array2.reduce((reserve, name) => {
+  //   let creep = game.creeps->Js.Dict.unsafeGet(name)
+  //   // 已经有任务, 跳过
+  //   if tasks->Task.hasTask(creep) {
+  //     reserve
+  //   } else if creep.memory.role == "transferer" {
+  //     RoleTransferer.roleTransferer(creep, reserve)
+  //   } else {
+  //     reserve
+  //   }
+  // }, reserve)
 }
 
 let harvest = spawn => {
@@ -183,17 +198,34 @@ let harvest = spawn => {
   })
 }
 
+// type globalState = {mutable reserve: Reserve.state}
+
+// let globalState = {
+//   reserve: Reserve.initState,
+// }
+
 let loop = () => {
   let spawn = game.spawns->Js.Dict.unsafeGet("Spawn1")
   let room = spawn["room"]
 
-  Js.log("transfer")
+  let resourceIdToResource = id => game->getResourceById(id)->Belt.Option.getUnsafe
+  let creepNameToCreep = name => game.creeps->Js.Dict.get(name)
+
+  // let tasks = Task.init
+  // let (newReserve, tasks, effects) = Reserve.processState(
+  //   globalState.reserve,
+  //   tasks,
+  //   creepNameToCreep,
+  //   resourceIdToResource,
+  // )
+  // effects->Belt.List.forEach(effect => effect())
+
+  // let newReserve = transfer(spawn, tasks, newReserve)
   transfer(spawn)
-  Js.log("mine")
   mine(room, spawn)
-  Js.log("build")
   build(spawn, 3)
   upgraders(spawn)
   towerDefence(spawn)
-  dispatchTask()
+
+  // globalState.reserve = newReserve
 }

@@ -1,4 +1,5 @@
 open Binding
+open Common
 
 // return: bool 表示是否已经分配了运输任务
 let findAndTransfer = (creep, allStructures, structureTypes) => {
@@ -17,14 +18,18 @@ let findAndTransfer = (creep, allStructures, structureTypes) => {
 }
 
 let roleTransferer = (creep: creep) => {
-  if creep.store->getFreeCapacityE(resourceEnergy) > 0 {
-    let resources = creep.room->findDroppedResources
-    let resource = Belt.Array.get(resources, 0)
-    resource->Belt.Option.forEach(r => {
-      if creep->pickup(r) == errNotInRange {
-        let _ = creep->moveTo(r.pos)
-      }
+  let freeCapacity = creep.store->getFreeCapacityE(resourceEnergy)
+
+  if testToPick(creep) {
+    let resources = creep.room->findDroppedResourcesOpt({
+      "filter": (resource: resource) => resource.amount > freeCapacity,
     })
+    let resource = creep.pos->findClosestByPathResource(resources)
+
+    switch resource {
+    | Some(r) => pickResource(creep, r)
+    | _ => ()
+    }
   } else {
     // 所有建筑找出来
     let allStructures = creep.room->findStructures
@@ -43,3 +48,40 @@ let roleTransferer = (creep: creep) => {
     }
   }
 }
+
+// let roleTransferer = (creep: creep, reserve) => {
+//   let freeCapacity = creep.store->getFreeCapacityE(resourceEnergy)
+
+//   if testToPick(creep) {
+//     let resources = creep.room->findDroppedResourcesOpt({
+//       "filter": (resource: resource) => resource.amount > freeCapacity,
+//     })
+//     let resource = creep.pos->findClosestByPathResource(resources)
+
+//     switch resource {
+//     | Some(r) => {
+//         pickResource(creep, r)
+//         Reserve.reserve(reserve, creep, r, freeCapacity)
+//       }
+//     | _ => reserve
+//     }
+//   } else {
+//     // 所有建筑找出来
+//     let allStructures = creep.room->findStructures
+
+//     // 找出 [structureExtension, structureSpawn] 类型的建筑, 搬运
+//     let hasTask = findAndTransfer(creep, allStructures, [structureExtension, structureSpawn])
+//     if !hasTask {
+//       let hasTask = findAndTransfer(creep, allStructures, [structureTower])
+//       if !hasTask {
+//         // 如果没有上述的搬运任务, 再找 [structureContainerC] 类型的搬运任务
+//         let hasTask = findAndTransfer(creep, allStructures, [structureContainerC])
+//         if !hasTask {
+//           let _ = findAndTransfer(creep, allStructures, [structureStorage])
+//         }
+//       }
+//     }
+
+//     reserve
+//   }
+// }

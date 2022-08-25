@@ -85,7 +85,7 @@ type memory = {
   mutable repairing: bool
 }
 
-type resource = {pos: roomPosition, amount: int}
+type resource = {pos: roomPosition, amount: int, id: string}
 
 type constructionSite = {
   pos: roomPosition,
@@ -158,10 +158,10 @@ type game = {
 
 @send @return(nullable)
 external getStructureById: (game, string) => option<structure> = "getObjectById"
-
+@send @return(nullable)
+external getResourceById: (game, string) => option<resource> = "getObjectById"
 @send @return(nullable)
 external getTowerById: (game, string) => option<tower> = "getObjectById"
-
 @send @return(nullable)
 external getCreepById: (game, string) => option<creep> = "getObjectById"
 
@@ -295,6 +295,7 @@ external findClosestHostileCreepsByRangeOpt: (roomPosition, @as(103) _, 'a) => o
 @send external findSourcesAtive: (room, @as(104) _) => array<source> = "find"
 @send external findSources: (room, @as(105) _) => array<source> = "find"
 @send external findDroppedResources: (room, @as(106) _) => array<resource> = "find"
+@send external findDroppedResourcesOpt: (room, @as(106) _, 'a) => array<resource> = "find"
 @send external findStructures: (room, @as(107) _) => array<structure> = "find"
 @send external findMyStructures: (room, @as(108) _) => array<structure> = "find"
 @send external findHostileStructures: (room, @as(109) _) => array<structure> = "find"
