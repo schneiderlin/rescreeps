@@ -135,29 +135,30 @@ let build = (spawn, n) => {
 }
 
 let transfer = spawn => {
-  let transferers =
-    game.creeps
-    ->Js.Dict.values
-    ->Js.Array2.filter(creep => {
-      creep.memory.role == "transferer"
-    })
+  let bodies = [carry, carry, carry, carry, move, move]
 
-  if transferers->Js.Array2.length < 2 {
-    let newName = "Transferer" ++ game.time->Belt.Int.toString
-    let _ =
-      spawn->spawnCreepOpts(
-        [carry, carry, carry, carry, move, move],
-        newName,
-        {"memory": {"role": "transferer"}},
-      )
+  let name1 = RoleTransferer.transfererName(minePos1)
+  let err1 = spawn->spawnCreepOpts(bodies, name1, {"memory": {"role": "transferer1"}})
+  if err1 == errNotEnoughEnergy {
+    Js.log("transferer no energy")
   }
 
+  let name2 = RoleTransferer.transfererName(minePos2)
+  let err2 = spawn->spawnCreepOpts(bodies, name2, {"memory": {"role": "transferer2"}})
+  if err2 == errNotEnoughEnergy {
+    Js.log("transferer no energy")
+  }
+
+  // 分配任务
   game.creeps
   ->Js.Dict.keys
   ->Js.Array2.forEach(name => {
     let creep = game.creeps->Js.Dict.unsafeGet(name)
-    if creep.memory.role == "transferer" {
-      RoleTransferer.roleTransferer(creep)
+    if creep.memory.role == "transferer1" {
+      RoleTransferer.roleTransferer(creep, minePos1)
+    }
+    if creep.memory.role == "transferer2" {
+      RoleTransferer.roleTransferer(creep, minePos2)
     }
   })
 

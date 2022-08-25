@@ -3,6 +3,14 @@
 
 var Caml_obj = require("rescript/lib/js/caml_obj.js");
 
+function samePosition(p1, p2) {
+  if (Caml_obj.caml_equal(p1.x, p2.x)) {
+    return Caml_obj.caml_equal(p2.y, p2.y);
+  } else {
+    return false;
+  }
+}
+
 function testToPick(creep) {
   var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
   return freeCapacity > 0;
@@ -16,6 +24,7 @@ function pickResource(creep, resource) {
   
 }
 
+exports.samePosition = samePosition;
 exports.testToPick = testToPick;
 exports.pickResource = pickResource;
 /* No side effect */

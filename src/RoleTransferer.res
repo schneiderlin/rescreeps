@@ -1,6 +1,10 @@
 open Binding
 open Common
 
+let transfererName = minePos => {
+  "Transferer" ++ minePos["x"]->Belt.Int.toString ++ "." ++ minePos["y"]->Belt.Int.toString
+}
+
 // return: bool 表示是否已经分配了运输任务
 let findAndTransfer = (creep, allStructures, structureTypes) => {
   let filteredTargets = allStructures->Js.Array2.filter(structure => {
@@ -17,18 +21,31 @@ let findAndTransfer = (creep, allStructures, structureTypes) => {
   }
 }
 
-let roleTransferer = (creep: creep) => {
+let roleTransferer = (creep: creep, minePos) => {
   let freeCapacity = creep.store->getFreeCapacityE(resourceEnergy)
 
   if testToPick(creep) {
-    let resources = creep.room->findDroppedResourcesOpt({
-      "filter": (resource: resource) => resource.amount > freeCapacity,
-    })
-    let resource = creep.pos->findClosestByPathResource(resources)
+    // 先找固定位置的 resource
+    let targetResource =
+      creep.room
+      ->findDroppedResourcesOpt({
+        "filter": (resource: resource) => Common.samePosition(resource.pos, minePos),
+      })
+      ->Belt.Array.get(0)
 
-    switch resource {
-    | Some(r) => pickResource(creep, r)
-    | _ => ()
+    switch targetResource {
+    | Some(target) => pickResource(creep, target)
+    | _ =>
+      // 找不到固定位置的再找最近的
+      let resources = creep.room->findDroppedResourcesOpt({
+        "filter": (resource: resource) => resource.amount > freeCapacity,
+      })
+      let resource = creep.pos->findClosestByPathResource(resources)
+
+      switch resource {
+      | Some(r) => pickResource(creep, r)
+      | _ => ()
+      }
     }
   } else {
     // 所有建筑找出来

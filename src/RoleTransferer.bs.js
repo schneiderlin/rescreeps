@@ -3,9 +3,14 @@
 
 var Common = require("./Common.bs.js");
 var Caml_obj = require("rescript/lib/js/caml_obj.js");
+var Belt_Array = require("rescript/lib/js/belt_Array.js");
 var Caml_array = require("rescript/lib/js/caml_array.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
+
+function transfererName(minePos) {
+  return "Transferer" + String(minePos.x) + "." + String(minePos.y);
+}
 
 function findAndTransfer(creep, allStructures, structureTypes) {
   var filteredTargets = allStructures.filter(function (structure) {
@@ -27,9 +32,17 @@ function findAndTransfer(creep, allStructures, structureTypes) {
   }
 }
 
-function roleTransferer(creep) {
+function roleTransferer(creep, minePos) {
   var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
   if (Common.testToPick(creep)) {
+    var targetResource = Belt_Array.get(creep.room.find(106, {
+              filter: (function (resource) {
+                  return Common.samePosition(resource.pos, minePos);
+                })
+            }), 0);
+    if (targetResource !== undefined) {
+      return Common.pickResource(creep, targetResource);
+    }
     var resources = creep.room.find(106, {
           filter: (function (resource) {
               return resource.amount > freeCapacity;
@@ -62,6 +75,7 @@ function roleTransferer(creep) {
   
 }
 
+exports.transfererName = transfererName;
 exports.findAndTransfer = findAndTransfer;
 exports.roleTransferer = roleTransferer;
 /* No side effect */

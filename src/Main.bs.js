@@ -155,28 +155,39 @@ function build(spawn, n) {
 }
 
 function transfer(spawn) {
-  var transferers = Js_dict.values(Game.creeps).filter(function (creep) {
-        return creep.memory.role === "transferer";
+  var bodies = [
+    CARRY,
+    CARRY,
+    CARRY,
+    CARRY,
+    MOVE,
+    MOVE
+  ];
+  var name1 = RoleTransferer.transfererName(minePos1);
+  var err1 = spawn.spawnCreep(bodies, name1, {
+        memory: {
+          role: "transferer1"
+        }
       });
-  if (transferers.length < 2) {
-    var newName = "Transferer" + String(Game.time);
-    spawn.spawnCreep([
-          CARRY,
-          CARRY,
-          CARRY,
-          CARRY,
-          MOVE,
-          MOVE
-        ], newName, {
-          memory: {
-            role: "transferer"
-          }
-        });
+  if (Caml_obj.caml_equal(err1, ERR_NOT_ENOUGH_ENERGY)) {
+    console.log("transferer no energy");
+  }
+  var name2 = RoleTransferer.transfererName(minePos2);
+  var err2 = spawn.spawnCreep(bodies, name2, {
+        memory: {
+          role: "transferer2"
+        }
+      });
+  if (Caml_obj.caml_equal(err2, ERR_NOT_ENOUGH_ENERGY)) {
+    console.log("transferer no energy");
   }
   Object.keys(Game.creeps).forEach(function (name) {
         var creep = Game.creeps[name];
-        if (creep.memory.role === "transferer") {
-          return RoleTransferer.roleTransferer(creep);
+        if (creep.memory.role === "transferer1") {
+          RoleTransferer.roleTransferer(creep, minePos1);
+        }
+        if (creep.memory.role === "transferer2") {
+          return RoleTransferer.roleTransferer(creep, minePos2);
         }
         
       });
