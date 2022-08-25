@@ -800,11 +800,6 @@ function samePosition(p1, p2) {
   }
 }
 
-function testToPick(creep) {
-  var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
-  return freeCapacity > 0;
-}
-
 function pickResource(creep, resource) {
   if (Caml_obj$7.caml_equal(creep.pickup(resource), ERR_NOT_IN_RANGE)) {
     creep.moveTo(resource.pos);
@@ -814,7 +809,6 @@ function pickResource(creep, resource) {
 }
 
 Common_bs.samePosition = samePosition;
-Common_bs.testToPick = testToPick;
 Common_bs.pickResource = pickResource;
 
 var belt_Option = {};
@@ -2707,43 +2701,49 @@ function findAndTransfer(creep, allStructures, structureTypes) {
 
 function roleTransferer(creep, minePos) {
   var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
-  if (Common.testToPick(creep)) {
-    var targetResource = Belt_Array.get(creep.room.find(106, {
-              filter: (function (resource) {
-                  return Common.samePosition(resource.pos, minePos);
-                })
-            }), 0);
-    if (targetResource !== undefined) {
-      return Common.pickResource(creep, targetResource);
+  if (creep.memory.transfering && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.transfering = false;
+  }
+  if (!creep.memory.transfering && freeCapacity === 0) {
+    creep.memory.transfering = true;
+  }
+  if (creep.memory.transfering) {
+    var allStructures = creep.room.find(107);
+    var hasTask = findAndTransfer(creep, allStructures, [
+          STRUCTURE_EXTENSION,
+          STRUCTURE_SPAWN
+        ]);
+    if (hasTask) {
+      return ;
     }
-    var resources = creep.room.find(106, {
-          filter: (function (resource) {
-              return resource.amount > freeCapacity;
-            })
-        });
-    var resource = creep.pos.findClosestByPath(resources);
-    if (!(resource == null)) {
-      return Common.pickResource(creep, resource);
+    var hasTask$1 = findAndTransfer(creep, allStructures, [STRUCTURE_TOWER]);
+    if (hasTask$1) {
+      return ;
+    }
+    var hasTask$2 = findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
+    if (!hasTask$2) {
+      findAndTransfer(creep, allStructures, [STRUCTURE_STORAGE]);
+      return ;
     } else {
       return ;
     }
   }
-  var allStructures = creep.room.find(107);
-  var hasTask = findAndTransfer(creep, allStructures, [
-        STRUCTURE_EXTENSION,
-        STRUCTURE_SPAWN
-      ]);
-  if (hasTask) {
-    return ;
+  var targetResource = Belt_Array.get(creep.room.find(106, {
+            filter: (function (resource) {
+                return Common.samePosition(resource.pos, minePos);
+              })
+          }), 0);
+  if (targetResource !== undefined) {
+    return Common.pickResource(creep, targetResource);
   }
-  var hasTask$1 = findAndTransfer(creep, allStructures, [STRUCTURE_TOWER]);
-  if (hasTask$1) {
-    return ;
-  }
-  var hasTask$2 = findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
-  if (!hasTask$2) {
-    findAndTransfer(creep, allStructures, [STRUCTURE_STORAGE]);
-    return ;
+  var resources = creep.room.find(106, {
+        filter: (function (resource) {
+            return resource.amount > freeCapacity;
+          })
+      });
+  var resource = creep.pos.findClosestByPath(resources);
+  if (!(resource == null)) {
+    return Common.pickResource(creep, resource);
   }
   
 }

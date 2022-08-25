@@ -11,11 +11,6 @@ function samePosition(p1, p2) {
   }
 }
 
-function testToPick(creep) {
-  var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
-  return freeCapacity > 0;
-}
-
 function pickResource(creep, resource) {
   if (Caml_obj.caml_equal(creep.pickup(resource), ERR_NOT_IN_RANGE)) {
     creep.moveTo(resource.pos);
@@ -25,6 +20,5 @@ function pickResource(creep, resource) {
 }
 
 exports.samePosition = samePosition;
-exports.testToPick = testToPick;
 exports.pickResource = pickResource;
 /* No side effect */

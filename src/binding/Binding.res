@@ -82,7 +82,8 @@ type memory = {
   role: string,
   mutable building: bool,
   mutable upgrading: bool,
-  mutable repairing: bool
+  mutable repairing: bool,
+  mutable transfering: bool
 }
 
 type resource = {pos: roomPosition, amount: int, id: string}

@@ -3,7 +3,6 @@
 
 var Task = require("./Task.bs.js");
 var Curry = require("rescript/lib/js/curry.js");
-var Common = require("./Common.bs.js");
 var Belt_List = require("rescript/lib/js/belt_List.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 
@@ -46,32 +45,18 @@ function dispatchTasks(state, tasks, creepNameToCreep, resourceIdToResource) {
                 var effects = param[0];
                 var name = reservation.creepName;
                 var creep = Curry._1(creepNameToCreep, name);
-                if (creep === undefined) {
+                if (creep !== undefined) {
+                  Task.hasTask(tasks, creep);
+                  return [
+                          effects,
+                          tasks
+                        ];
+                } else {
                   return [
                           effects,
                           tasks
                         ];
                 }
-                if (Task.hasTask(tasks, creep)) {
-                  return [
-                          effects,
-                          tasks
-                        ];
-                }
-                if (!Common.testToPick(creep)) {
-                  return [
-                          effects,
-                          tasks
-                        ];
-                }
-                var resource = Curry._1(resourceIdToResource, reservation.resourceId);
-                var effect = function (param) {
-                  return Common.pickResource(creep, resource);
-                };
-                return [
-                        Belt_List.add(effects, effect),
-                        Task.addTask(tasks, creep)
-                      ];
               }));
 }
 

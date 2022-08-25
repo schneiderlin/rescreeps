@@ -69,7 +69,8 @@ let dispatchTasks: (
     | Some(c) =>
       if tasks->hasTask(c) {
         (effects, tasks)
-      } else if Common.testToPick(c) {
+      } else if false {
+        // false -> Common.testToPick(c)
         let resource = resourceIdToResource(reservation.resourceId)
         let effect = () => Common.pickResource(c, resource)
         (effects->Belt.List.add(effect), tasks->addTask(c))

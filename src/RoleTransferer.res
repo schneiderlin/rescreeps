@@ -24,7 +24,30 @@ let findAndTransfer = (creep, allStructures, structureTypes) => {
 let roleTransferer = (creep: creep, minePos) => {
   let freeCapacity = creep.store->getFreeCapacityE(resourceEnergy)
 
-  if testToPick(creep) {
+  if creep.memory.transfering && creep.store->getUsedCapacityE(resourceEnergy) == 0 {
+    creep.memory.transfering = false
+  }
+  if !creep.memory.transfering && freeCapacity == 0 {
+    creep.memory.transfering = true
+  }
+
+  if creep.memory.transfering {
+    // 所有建筑找出来
+    let allStructures = creep.room->findStructures
+
+    // 找出 [structureExtension, structureSpawn] 类型的建筑, 搬运
+    let hasTask = findAndTransfer(creep, allStructures, [structureExtension, structureSpawn])
+    if !hasTask {
+      let hasTask = findAndTransfer(creep, allStructures, [structureTower])
+      if !hasTask {
+        // 如果没有上述的搬运任务, 再找 [structureContainerC] 类型的搬运任务
+        let hasTask = findAndTransfer(creep, allStructures, [structureContainerC])
+        if !hasTask {
+          let _ = findAndTransfer(creep, allStructures, [structureStorage])
+        }
+      }
+    }
+  } else {
     // 先找固定位置的 resource
     let targetResource =
       creep.room
@@ -45,22 +68,6 @@ let roleTransferer = (creep: creep, minePos) => {
       switch resource {
       | Some(r) => pickResource(creep, r)
       | _ => ()
-      }
-    }
-  } else {
-    // 所有建筑找出来
-    let allStructures = creep.room->findStructures
-
-    // 找出 [structureExtension, structureSpawn] 类型的建筑, 搬运
-    let hasTask = findAndTransfer(creep, allStructures, [structureExtension, structureSpawn])
-    if !hasTask {
-      let hasTask = findAndTransfer(creep, allStructures, [structureTower])
-      if !hasTask {
-        // 如果没有上述的搬运任务, 再找 [structureContainerC] 类型的搬运任务
-        let hasTask = findAndTransfer(creep, allStructures, [structureContainerC])
-        if !hasTask {
-          let _ = findAndTransfer(creep, allStructures, [structureStorage])
-        }
       }
     }
   }
