@@ -65,7 +65,7 @@ type structureExtension = {
   "hits": int,
   "hitsMax": int,
 }
-type room = {"controller": structureController, "energyAvailable": int}
+type room = {"controller": structureController, "energyAvailable": int, "name": string}
 type roomObject = {"pos": roomPosition, "room": room}
 
 type stats = {

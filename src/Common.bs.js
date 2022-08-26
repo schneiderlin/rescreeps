@@ -4,8 +4,8 @@
 var Caml_obj = require("rescript/lib/js/caml_obj.js");
 
 function samePosition(p1, p2) {
-  if (Caml_obj.caml_equal(p1.x, p2.x)) {
-    return Caml_obj.caml_equal(p2.y, p2.y);
+  if (p1.x === p2.x && p2.y === p2.y) {
+    return p1.roomName === p2.roomName;
   } else {
     return false;
   }

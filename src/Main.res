@@ -45,13 +45,21 @@ let towerDefence = spawn => {
 }
 
 let minePos1 = {
+  "roomName": "E32N28"
   "x": 5,
   "y": 16,
 }
 
 let minePos2 = {
+  "roomName": "E32N28"
   "x": 13,
   "y": 22,
+}
+
+let outpostMinePos1 = {
+  "roomName": "E33N28"
+  "x": 10,
+  "y": 19
 }
 
 let mine = (room, spawn) => {
@@ -85,6 +93,24 @@ let mine = (room, spawn) => {
     }
     if creep.memory.role == "miner2" {
       RoleMiner.roleMiner(creep, minePos2)
+    }
+  })
+}
+
+let outpostMine = (_mainRoom, spawn) => {
+  let bodies = [work, move]
+
+  // 生成
+  let name1 = RoleOutpostMiner.minerName(outpostMinePos1)
+  let _ = spawn->spawnCreepOpts(bodies, name1, {"memory": {"role": "outpostMiner1"}})
+
+  // 分配任务
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "outpostMiner1" {
+      RoleOutpostMiner.roleMiner(creep, outpostMinePos1)
     }
   })
 }
@@ -209,8 +235,8 @@ let loop = () => {
   let spawn = game.spawns->Js.Dict.unsafeGet("Spawn1")
   let room = spawn["room"]
 
-  let resourceIdToResource = id => game->getResourceById(id)->Belt.Option.getUnsafe
-  let creepNameToCreep = name => game.creeps->Js.Dict.get(name)
+  // let resourceIdToResource = id => game->getResourceById(id)->Belt.Option.getUnsafe
+  // let creepNameToCreep = name => game.creeps->Js.Dict.get(name)
 
   // let tasks = Task.init
   // let (newReserve, tasks, effects) = Reserve.processState(
@@ -224,6 +250,7 @@ let loop = () => {
   // let newReserve = transfer(spawn, tasks, newReserve)
   transfer(spawn)
   mine(room, spawn)
+  outpostMine(room, spawn)
   build(spawn, 3)
   upgraders(spawn)
   towerDefence(spawn)

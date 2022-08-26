@@ -7,7 +7,7 @@ var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
 
 function minerName(minePos) {
-  return "Miner" + String(minePos.x) + "." + String(minePos.y);
+  return "OutpostMiner" + minePos.roomName + String(minePos.x) + "." + String(minePos.y);
 }
 
 function roleMiner(creep, minePos) {
@@ -22,7 +22,17 @@ function roleMiner(creep, minePos) {
                   
                 }));
   }
-  creep.moveTo(minePos.x, minePos.y);
+  var match = creep.room.name;
+  switch (match) {
+    case "E32N28" :
+        creep.moveTo(49, 17);
+        break;
+    case "E33N28" :
+        creep.moveTo(minePos.x, minePos.y);
+        break;
+    default:
+      console.log("外矿工人跑到了其他房间");
+  }
   
 }
 

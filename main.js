@@ -89,11 +89,11 @@ caml_option.isNested = isNested;
 caml_option.option_get = option_get;
 caml_option.option_unwrap = option_unwrap;
 
-var Caml_option$8 = caml_option;
+var Caml_option$9 = caml_option;
 
 function get$2(dict, k) {
   if ((k in dict)) {
-    return Caml_option$8.some(dict[k]);
+    return Caml_option$9.some(dict[k]);
   }
   
 }
@@ -790,18 +790,18 @@ var RoleMiner_bs = {};
 
 var Common_bs = {};
 
-var Caml_obj$7 = caml_obj;
+var Caml_obj$8 = caml_obj;
 
 function samePosition(p1, p2) {
-  if (Caml_obj$7.caml_equal(p1.x, p2.x)) {
-    return Caml_obj$7.caml_equal(p2.y, p2.y);
+  if (p1.x === p2.x && p2.y === p2.y) {
+    return p1.roomName === p2.roomName;
   } else {
     return false;
   }
 }
 
 function pickResource(creep, resource) {
-  if (Caml_obj$7.caml_equal(creep.pickup(resource), ERR_NOT_IN_RANGE)) {
+  if (Caml_obj$8.caml_equal(creep.pickup(resource), ERR_NOT_IN_RANGE)) {
     creep.moveTo(resource.pos);
     return ;
   }
@@ -1454,10 +1454,10 @@ curry._8 = _8;
 curry.__8 = __8;
 
 var Curry$1 = curry;
-var Caml_option$7 = caml_option;
+var Caml_option$8 = caml_option;
 
 function keepU$1(opt, p) {
-  if (opt !== undefined && p(Caml_option$7.valFromOption(opt))) {
+  if (opt !== undefined && p(Caml_option$8.valFromOption(opt))) {
     return opt;
   }
   
@@ -1469,7 +1469,7 @@ function keep$1(opt, p) {
 
 function forEachU$1(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$7.valFromOption(opt));
+    return f(Caml_option$8.valFromOption(opt));
   }
   
 }
@@ -1480,7 +1480,7 @@ function forEach$1(opt, f) {
 
 function getExn$1(x) {
   if (x !== undefined) {
-    return Caml_option$7.valFromOption(x);
+    return Caml_option$8.valFromOption(x);
   }
   throw {
         RE_EXN_ID: "Not_found",
@@ -1490,7 +1490,7 @@ function getExn$1(x) {
 
 function mapWithDefaultU(opt, $$default, f) {
   if (opt !== undefined) {
-    return f(Caml_option$7.valFromOption(opt));
+    return f(Caml_option$8.valFromOption(opt));
   } else {
     return $$default;
   }
@@ -1502,7 +1502,7 @@ function mapWithDefault(opt, $$default, f) {
 
 function mapU$1(opt, f) {
   if (opt !== undefined) {
-    return Caml_option$7.some(f(Caml_option$7.valFromOption(opt)));
+    return Caml_option$8.some(f(Caml_option$8.valFromOption(opt)));
   }
   
 }
@@ -1513,7 +1513,7 @@ function map$1(opt, f) {
 
 function flatMapU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$7.valFromOption(opt));
+    return f(Caml_option$8.valFromOption(opt));
   }
   
 }
@@ -1524,7 +1524,7 @@ function flatMap(opt, f) {
 
 function getWithDefault(opt, $$default) {
   if (opt !== undefined) {
-    return Caml_option$7.valFromOption(opt);
+    return Caml_option$8.valFromOption(opt);
   } else {
     return $$default;
   }
@@ -1541,7 +1541,7 @@ function isNone(x) {
 function eqU$1(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$7.valFromOption(a), Caml_option$7.valFromOption(b));
+      return f(Caml_option$8.valFromOption(a), Caml_option$8.valFromOption(b));
     } else {
       return false;
     }
@@ -1557,7 +1557,7 @@ function eq$1(a, b, f) {
 function cmpU$1(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$7.valFromOption(a), Caml_option$7.valFromOption(b));
+      return f(Caml_option$8.valFromOption(a), Caml_option$8.valFromOption(b));
     } else {
       return 1;
     }
@@ -1591,44 +1591,40 @@ belt_Option.eq = eq$1;
 belt_Option.cmpU = cmpU$1;
 belt_Option.cmp = cmp$1;
 
-var Common$1 = Common_bs;
-var Caml_obj$6 = caml_obj;
-var Belt_Option$6 = belt_Option;
-var Caml_option$6 = caml_option;
+var Common$2 = Common_bs;
+var Caml_obj$7 = caml_obj;
+var Belt_Option$7 = belt_Option;
+var Caml_option$7 = caml_option;
 
-function minerName(minePos) {
+function minerName$1(minePos) {
   return "Miner" + String(minePos.x) + "." + String(minePos.y);
 }
 
-function roleMiner(creep, minePos) {
-  if (Common$1.samePosition(creep.pos, minePos)) {
-    console.log("miner working", creep.name);
+function roleMiner$1(creep, minePos) {
+  if (Common$2.samePosition(creep.pos, minePos)) {
     var sources = creep.room.find(105);
     var source = creep.pos.findClosestByPath(sources);
-    var source$1 = (source == null) ? undefined : Caml_option$6.some(source);
-    console.log(sources, source$1);
-    return Belt_Option$6.forEach(source$1, (function (s) {
-                  if (Caml_obj$6.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
+    return Belt_Option$7.forEach((source == null) ? undefined : Caml_option$7.some(source), (function (s) {
+                  if (Caml_obj$7.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
                     creep.moveTo(s.pos);
                     return ;
                   }
                   
                 }));
   }
-  var moveErr = creep.moveTo(minePos.x, minePos.y);
-  console.log("miner moving", creep.name, moveErr);
+  creep.moveTo(minePos.x, minePos.y);
   
 }
 
-RoleMiner_bs.minerName = minerName;
-RoleMiner_bs.roleMiner = roleMiner;
+RoleMiner_bs.minerName = minerName$1;
+RoleMiner_bs.roleMiner = roleMiner$1;
 
 var RoleBuilder_bs = {};
 
-var Caml_obj$5 = caml_obj;
+var Caml_obj$6 = caml_obj;
 var Caml_array$3 = caml_array;
-var Belt_Option$5 = belt_Option;
-var Caml_option$5 = caml_option;
+var Belt_Option$6 = belt_Option;
+var Caml_option$6 = caml_option;
 
 function roleBuilder(creep) {
   if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
@@ -1639,7 +1635,7 @@ function roleBuilder(creep) {
   }
   if (creep.memory.building) {
     var targets = creep.room.find(111);
-    if (targets.length > 0 && Caml_obj$5.caml_equal(creep.build(Caml_array$3.get(targets, 0)), ERR_NOT_IN_RANGE)) {
+    if (targets.length > 0 && Caml_obj$6.caml_equal(creep.build(Caml_array$3.get(targets, 0)), ERR_NOT_IN_RANGE)) {
       creep.moveTo(Caml_array$3.get(targets, 0).pos);
       return ;
     } else {
@@ -1649,8 +1645,8 @@ function roleBuilder(creep) {
   var resource = creep.pos.findClosestByPath(creep.room.find(106).filter(function (r) {
             return r.amount > 100;
           }));
-  return Belt_Option$5.forEach((resource == null) ? undefined : Caml_option$5.some(resource), (function (r) {
-                if (Caml_obj$5.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
+  return Belt_Option$6.forEach((resource == null) ? undefined : Caml_option$6.some(resource), (function (r) {
+                if (Caml_obj$6.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
                   creep.moveTo(r.pos);
                   return ;
                 }
@@ -1662,15 +1658,15 @@ RoleBuilder_bs.roleBuilder = roleBuilder;
 
 var RoleRepairer_bs = {};
 
-var Caml_obj$4 = caml_obj;
+var Caml_obj$5 = caml_obj;
 var Caml_array$2 = caml_array;
-var Belt_Option$4 = belt_Option;
-var Caml_option$4 = caml_option;
+var Belt_Option$5 = belt_Option;
+var Caml_option$5 = caml_option;
 
 function findRepairTargets(spawn) {
   return spawn.room.find(107).filter(function (structure) {
               if (structure.hits < (structure.hitsMax - 2000 | 0)) {
-                return Caml_obj$4.caml_notequal(structure.structureType, STRUCTURE_WALL);
+                return Caml_obj$5.caml_notequal(structure.structureType, STRUCTURE_WALL);
               } else {
                 return false;
               }
@@ -1686,8 +1682,8 @@ function roleRepairer(spawn, creep) {
   }
   if (creep.memory.repairing) {
     var closestDamagedStructure = creep.pos.findClosestByRange(findRepairTargets(spawn));
-    var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option$4.some(closestDamagedStructure);
-    if (Belt_Option$4.isSome(closestDamagedStructure$1) && Caml_obj$4.caml_equal(creep.repair(closestDamagedStructure$1), ERR_NOT_IN_RANGE)) {
+    var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option$5.some(closestDamagedStructure);
+    if (Belt_Option$5.isSome(closestDamagedStructure$1) && Caml_obj$5.caml_equal(creep.repair(closestDamagedStructure$1), ERR_NOT_IN_RANGE)) {
       creep.moveTo(closestDamagedStructure$1.pos);
       return ;
     } else {
@@ -1695,7 +1691,7 @@ function roleRepairer(spawn, creep) {
     }
   }
   var resources = creep.room.find(106);
-  if (Caml_obj$4.caml_equal(creep.pickup(Caml_array$2.get(resources, 1)), ERR_NOT_IN_RANGE)) {
+  if (Caml_obj$5.caml_equal(creep.pickup(Caml_array$2.get(resources, 1)), ERR_NOT_IN_RANGE)) {
     creep.moveTo(Caml_array$2.get(resources, 1).pos);
     return ;
   }
@@ -1737,8 +1733,8 @@ caml_exceptions.create = create;
 caml_exceptions.caml_is_extension = caml_is_extension;
 caml_exceptions.caml_exn_slot_name = caml_exn_slot_name;
 
-var Belt_Option$3 = belt_Option;
-var Caml_option$3 = caml_option;
+var Belt_Option$4 = belt_Option;
+var Caml_option$4 = caml_option;
 var Caml_exceptions = caml_exceptions;
 
 var Err = /* @__PURE__ */Caml_exceptions.create("Binding.Err");
@@ -1771,7 +1767,7 @@ var Private = {
 };
 
 function findClosestByPath(pos, array) {
-  return Belt_Option$3.map(Caml_option$3.nullable_to_opt(pos.findClosestByPath(array)), classify);
+  return Belt_Option$4.map(Caml_option$4.nullable_to_opt(pos.findClosestByPath(array)), classify);
 }
 
 Binding_bs.Err = Err;
@@ -1780,8 +1776,8 @@ Binding_bs.Private = Private;
 Binding_bs.findClosestByPath = findClosestByPath;
 
 var Binding = Binding_bs;
-var Caml_obj$3 = caml_obj;
-var Belt_Option$2 = belt_Option;
+var Caml_obj$4 = caml_obj;
+var Belt_Option$3 = belt_Option;
 
 function roleUpgrader(creep) {
   if (creep.memory.upgrading && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
@@ -1791,7 +1787,7 @@ function roleUpgrader(creep) {
     creep.memory.upgrading = true;
   }
   if (creep.memory.upgrading) {
-    if (Caml_obj$3.caml_equal(creep.upgradeController(creep.room.controller), ERR_NOT_IN_RANGE)) {
+    if (Caml_obj$4.caml_equal(creep.upgradeController(creep.room.controller), ERR_NOT_IN_RANGE)) {
       creep.moveTo(creep.room.controller.pos);
       return ;
     } else {
@@ -1799,7 +1795,7 @@ function roleUpgrader(creep) {
     }
   }
   var containers = creep.room.find(107).filter(function (structure) {
-        if (Caml_obj$3.caml_equal(structure.structureType, STRUCTURE_CONTAINER)) {
+        if (Caml_obj$4.caml_equal(structure.structureType, STRUCTURE_CONTAINER)) {
           return structure.store.getUsedCapacity(RESOURCE_ENERGY) > 500;
         } else {
           return false;
@@ -1812,10 +1808,10 @@ function roleUpgrader(creep) {
             return prim;
           }));
   var target = Binding.findClosestByPath(creep.pos, candidates);
-  return Belt_Option$2.forEach(target, (function (t) {
+  return Belt_Option$3.forEach(target, (function (t) {
                 if (t.TAG === /* Resource */0) {
                   var r = t._0;
-                  if (Caml_obj$3.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
+                  if (Caml_obj$4.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
                     creep.moveTo(r.pos);
                     return ;
                   } else {
@@ -1823,7 +1819,7 @@ function roleUpgrader(creep) {
                   }
                 }
                 var s = t._0;
-                if (Caml_obj$3.caml_equal(creep.withdraw(s, RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
+                if (Caml_obj$4.caml_equal(creep.withdraw(s, RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
                   creep.moveTo(s.pos);
                   return ;
                 }
@@ -1835,13 +1831,13 @@ RoleUpgrader_bs.roleUpgrader = roleUpgrader;
 
 var RoleHarvester_bs = {};
 
-var Caml_obj$2 = caml_obj;
+var Caml_obj$3 = caml_obj;
 var Caml_array$1 = caml_array;
 
 function roleHarvester(creep) {
   if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
     var resources = creep.room.find(106);
-    if (Caml_obj$2.caml_equal(creep.pickup(Caml_array$1.get(resources, 0)), ERR_NOT_IN_RANGE)) {
+    if (Caml_obj$3.caml_equal(creep.pickup(Caml_array$1.get(resources, 0)), ERR_NOT_IN_RANGE)) {
       creep.moveTo(Caml_array$1.get(resources, 0).pos);
       return ;
     } else {
@@ -1850,13 +1846,13 @@ function roleHarvester(creep) {
   }
   var targets = creep.room.find(107);
   var filteredTargets = targets.filter(function (structure) {
-        if (Caml_obj$2.caml_equal(structure.structureType, STRUCTURE_EXTENSION) || Caml_obj$2.caml_equal(structure.structureType, STRUCTURE_TOWER) || Caml_obj$2.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
+        if (Caml_obj$3.caml_equal(structure.structureType, STRUCTURE_EXTENSION) || Caml_obj$3.caml_equal(structure.structureType, STRUCTURE_TOWER) || Caml_obj$3.caml_equal(structure.structureType, STRUCTURE_SPAWN)) {
           return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
         } else {
           return false;
         }
       });
-  if (filteredTargets.length > 0 && Caml_obj$2.caml_equal(creep.transfer(Caml_array$1.get(filteredTargets, 0), RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
+  if (filteredTargets.length > 0 && Caml_obj$3.caml_equal(creep.transfer(Caml_array$1.get(filteredTargets, 0), RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
     creep.moveTo(Caml_array$1.get(filteredTargets, 0).pos);
     return ;
   }
@@ -1934,11 +1930,11 @@ js_math.random_int = random_int;
 var Caml = caml;
 var Curry = curry;
 var Js_math = js_math;
-var Caml_option$2 = caml_option;
+var Caml_option$3 = caml_option;
 
 function get(arr, i) {
   if (i >= 0 && i < arr.length) {
-    return Caml_option$2.some(arr[i]);
+    return Caml_option$3.some(arr[i]);
   }
   
 }
@@ -2253,7 +2249,7 @@ function getByU(a, p) {
   while(r === undefined && i < l) {
     var v = a[i];
     if (p(v)) {
-      r = Caml_option$2.some(v);
+      r = Caml_option$3.some(v);
     }
     i = i + 1 | 0;
   }  return r;
@@ -2328,7 +2324,7 @@ function keepMapU(a, f) {
     var v = a[i];
     var v$1 = f(v);
     if (v$1 !== undefined) {
-      r[j] = Caml_option$2.valFromOption(v$1);
+      r[j] = Caml_option$3.valFromOption(v$1);
       j = j + 1 | 0;
     }
     
@@ -2668,12 +2664,12 @@ belt_Array.cmp = cmp;
 belt_Array.eqU = eqU;
 belt_Array.eq = eq;
 
-var Common = Common_bs;
-var Caml_obj$1 = caml_obj;
+var Common$1 = Common_bs;
+var Caml_obj$2 = caml_obj;
 var Belt_Array = belt_Array;
 var Caml_array = caml_array;
-var Belt_Option$1 = belt_Option;
-var Caml_option$1 = caml_option;
+var Belt_Option$2 = belt_Option;
+var Caml_option$2 = caml_option;
 
 function transfererName(minePos) {
   return "Transferer" + String(minePos.x) + "." + String(minePos.y);
@@ -2681,8 +2677,8 @@ function transfererName(minePos) {
 
 function findAndTransfer(creep, allStructures, structureTypes) {
   var filteredTargets = allStructures.filter(function (structure) {
-        if (Belt_Option$1.isSome(Caml_option$1.undefined_to_opt(structureTypes.find(function (t) {
-                        return Caml_obj$1.caml_equal(structure.structureType, t);
+        if (Belt_Option$2.isSome(Caml_option$2.undefined_to_opt(structureTypes.find(function (t) {
+                        return Caml_obj$2.caml_equal(structure.structureType, t);
                       })))) {
           return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
         } else {
@@ -2690,7 +2686,7 @@ function findAndTransfer(creep, allStructures, structureTypes) {
         }
       });
   if (filteredTargets.length > 0) {
-    if (Caml_obj$1.caml_equal(creep.transfer(Caml_array.get(filteredTargets, 0), RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
+    if (Caml_obj$2.caml_equal(creep.transfer(Caml_array.get(filteredTargets, 0), RESOURCE_ENERGY), ERR_NOT_IN_RANGE)) {
       creep.moveTo(Caml_array.get(filteredTargets, 0).pos);
     }
     return true;
@@ -2730,11 +2726,11 @@ function roleTransferer(creep, minePos) {
   }
   var targetResource = Belt_Array.get(creep.room.find(106, {
             filter: (function (resource) {
-                return Common.samePosition(resource.pos, minePos);
+                return Common$1.samePosition(resource.pos, minePos);
               })
           }), 0);
   if (targetResource !== undefined) {
-    return Common.pickResource(creep, targetResource);
+    return Common$1.pickResource(creep, targetResource);
   }
   var resources = creep.room.find(106, {
         filter: (function (resource) {
@@ -2743,7 +2739,7 @@ function roleTransferer(creep, minePos) {
       });
   var resource = creep.pos.findClosestByPath(resources);
   if (!(resource == null)) {
-    return Common.pickResource(creep, resource);
+    return Common$1.pickResource(creep, resource);
   }
   
 }
@@ -2751,6 +2747,46 @@ function roleTransferer(creep, minePos) {
 RoleTransferer_bs.transfererName = transfererName;
 RoleTransferer_bs.findAndTransfer = findAndTransfer;
 RoleTransferer_bs.roleTransferer = roleTransferer;
+
+var RoleOutpostMiner_bs = {};
+
+var Common = Common_bs;
+var Caml_obj$1 = caml_obj;
+var Belt_Option$1 = belt_Option;
+var Caml_option$1 = caml_option;
+
+function minerName(minePos) {
+  return "OutpostMiner" + minePos.roomName + String(minePos.x) + "." + String(minePos.y);
+}
+
+function roleMiner(creep, minePos) {
+  if (Common.samePosition(creep.pos, minePos)) {
+    var sources = creep.room.find(105);
+    var source = creep.pos.findClosestByPath(sources);
+    return Belt_Option$1.forEach((source == null) ? undefined : Caml_option$1.some(source), (function (s) {
+                  if (Caml_obj$1.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
+                    creep.moveTo(s.pos);
+                    return ;
+                  }
+                  
+                }));
+  }
+  var match = creep.room.name;
+  switch (match) {
+    case "E32N28" :
+        creep.moveTo(49, 17);
+        break;
+    case "E33N28" :
+        creep.moveTo(minePos.x, minePos.y);
+        break;
+    default:
+      console.log("外矿工人跑到了其他房间");
+  }
+  
+}
+
+RoleOutpostMiner_bs.minerName = minerName;
+RoleOutpostMiner_bs.roleMiner = roleMiner;
 
 var Js_dict = js_dict;
 var Caml_obj = caml_obj;
@@ -2762,6 +2798,7 @@ var RoleRepairer = RoleRepairer_bs;
 var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 var RoleTransferer = RoleTransferer_bs;
+var RoleOutpostMiner = RoleOutpostMiner_bs;
 
 function upgraders(spawn) {
   var upgraders$1 = Js_dict.values(Game.creeps).filter(function (creep) {
@@ -2811,13 +2848,21 @@ function towerDefence(spawn) {
 }
 
 var minePos1 = {
+  roomName: "E32N28",
   x: 5,
   y: 16
 };
 
 var minePos2 = {
+  roomName: "E32N28",
   x: 13,
   y: 22
+};
+
+var outpostMinePos1 = {
+  roomName: "E33N28",
+  x: 10,
+  y: 19
 };
 
 function mine(room, spawn) {
@@ -2858,6 +2903,27 @@ function mine(room, spawn) {
         }
         if (creep.memory.role === "miner2") {
           return RoleMiner.roleMiner(creep, minePos2);
+        }
+        
+      });
+  
+}
+
+function outpostMine(_mainRoom, spawn) {
+  var bodies = [
+    WORK,
+    MOVE
+  ];
+  var name1 = RoleOutpostMiner.minerName(outpostMinePos1);
+  spawn.spawnCreep(bodies, name1, {
+        memory: {
+          role: "outpostMiner1"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "outpostMiner1") {
+          return RoleOutpostMiner.roleMiner(creep, outpostMinePos1);
         }
         
       });
@@ -2977,6 +3043,7 @@ function loop(param) {
   var room = spawn.room;
   transfer(spawn);
   mine(room, spawn);
+  outpostMine(room, spawn);
   build(spawn, 3);
   upgraders(spawn);
   return towerDefence(spawn);
@@ -2986,7 +3053,9 @@ var upgraders_1 = Main_bs.upgraders = upgraders;
 var towerDefence_1 = Main_bs.towerDefence = towerDefence;
 var minePos1_1 = Main_bs.minePos1 = minePos1;
 var minePos2_1 = Main_bs.minePos2 = minePos2;
+var outpostMinePos1_1 = Main_bs.outpostMinePos1 = outpostMinePos1;
 var mine_1 = Main_bs.mine = mine;
+var outpostMine_1 = Main_bs.outpostMine = outpostMine;
 var build_1 = Main_bs.build = build;
 var transfer_1 = Main_bs.transfer = transfer;
 var harvest_1 = Main_bs.harvest = harvest;
@@ -2999,6 +3068,8 @@ exports.loop = loop_1;
 exports.mine = mine_1;
 exports.minePos1 = minePos1_1;
 exports.minePos2 = minePos2_1;
+exports.outpostMine = outpostMine_1;
+exports.outpostMinePos1 = outpostMinePos1_1;
 exports.towerDefence = towerDefence_1;
 exports.transfer = transfer_1;
 exports.upgraders = upgraders_1;
