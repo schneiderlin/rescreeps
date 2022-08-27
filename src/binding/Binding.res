@@ -26,6 +26,7 @@ type bodyPart
 @val external work: bodyPart = "WORK"
 @val external carry: bodyPart = "CARRY"
 @val external move: bodyPart = "MOVE"
+@val external claim: bodyPart = "CLAIM"
 
 type roomPosition = {"x": int, "y": int, "roomName": string}
 type store = {"dummy": int}
@@ -162,6 +163,8 @@ external getStructureById: (game, string) => option<structure> = "getObjectById"
 @send @return(nullable)
 external getResourceById: (game, string) => option<resource> = "getObjectById"
 @send @return(nullable)
+external getControllerById: (game, string) => option<structureController> = "getObjectById"
+@send @return(nullable)
 external getTowerById: (game, string) => option<tower> = "getObjectById"
 @send @return(nullable)
 external getCreepById: (game, string) => option<creep> = "getObjectById"
@@ -273,6 +276,7 @@ external findClosestHostileCreepsByRangeOpt: (roomPosition, @as(103) _, 'a) => o
 @send external upgradeController: (creep, structureController) => actionErr = "upgradeController"
 @send external build: (creep, constructionSite) => actionErr = "build"
 @send external repair: (creep, structure) => actionErr = "repair"
+@send external claimController: (creep, structureController) => actionErr = "claimController"
 
 // tower functions
 // @send external attackT: (tower, pos)

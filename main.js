@@ -89,11 +89,11 @@ caml_option.isNested = isNested;
 caml_option.option_get = option_get;
 caml_option.option_unwrap = option_unwrap;
 
-var Caml_option$9 = caml_option;
+var Caml_option$a = caml_option;
 
 function get$2(dict, k) {
   if ((k in dict)) {
-    return Caml_option$9.some(dict[k]);
+    return Caml_option$a.some(dict[k]);
   }
   
 }
@@ -790,7 +790,7 @@ var RoleMiner_bs = {};
 
 var Common_bs = {};
 
-var Caml_obj$8 = caml_obj;
+var Caml_obj$9 = caml_obj;
 
 function samePosition(p1, p2) {
   if (p1.x === p2.x && p2.y === p2.y) {
@@ -801,7 +801,7 @@ function samePosition(p1, p2) {
 }
 
 function pickResource(creep, resource) {
-  if (Caml_obj$8.caml_equal(creep.pickup(resource), ERR_NOT_IN_RANGE)) {
+  if (Caml_obj$9.caml_equal(creep.pickup(resource), ERR_NOT_IN_RANGE)) {
     creep.moveTo(resource.pos);
     return ;
   }
@@ -1454,10 +1454,10 @@ curry._8 = _8;
 curry.__8 = __8;
 
 var Curry$1 = curry;
-var Caml_option$8 = caml_option;
+var Caml_option$9 = caml_option;
 
 function keepU$1(opt, p) {
-  if (opt !== undefined && p(Caml_option$8.valFromOption(opt))) {
+  if (opt !== undefined && p(Caml_option$9.valFromOption(opt))) {
     return opt;
   }
   
@@ -1469,7 +1469,7 @@ function keep$1(opt, p) {
 
 function forEachU$1(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$8.valFromOption(opt));
+    return f(Caml_option$9.valFromOption(opt));
   }
   
 }
@@ -1480,7 +1480,7 @@ function forEach$1(opt, f) {
 
 function getExn$1(x) {
   if (x !== undefined) {
-    return Caml_option$8.valFromOption(x);
+    return Caml_option$9.valFromOption(x);
   }
   throw {
         RE_EXN_ID: "Not_found",
@@ -1490,7 +1490,7 @@ function getExn$1(x) {
 
 function mapWithDefaultU(opt, $$default, f) {
   if (opt !== undefined) {
-    return f(Caml_option$8.valFromOption(opt));
+    return f(Caml_option$9.valFromOption(opt));
   } else {
     return $$default;
   }
@@ -1502,7 +1502,7 @@ function mapWithDefault(opt, $$default, f) {
 
 function mapU$1(opt, f) {
   if (opt !== undefined) {
-    return Caml_option$8.some(f(Caml_option$8.valFromOption(opt)));
+    return Caml_option$9.some(f(Caml_option$9.valFromOption(opt)));
   }
   
 }
@@ -1513,7 +1513,7 @@ function map$1(opt, f) {
 
 function flatMapU(opt, f) {
   if (opt !== undefined) {
-    return f(Caml_option$8.valFromOption(opt));
+    return f(Caml_option$9.valFromOption(opt));
   }
   
 }
@@ -1524,7 +1524,7 @@ function flatMap(opt, f) {
 
 function getWithDefault(opt, $$default) {
   if (opt !== undefined) {
-    return Caml_option$8.valFromOption(opt);
+    return Caml_option$9.valFromOption(opt);
   } else {
     return $$default;
   }
@@ -1541,7 +1541,7 @@ function isNone(x) {
 function eqU$1(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$8.valFromOption(a), Caml_option$8.valFromOption(b));
+      return f(Caml_option$9.valFromOption(a), Caml_option$9.valFromOption(b));
     } else {
       return false;
     }
@@ -1557,7 +1557,7 @@ function eq$1(a, b, f) {
 function cmpU$1(a, b, f) {
   if (a !== undefined) {
     if (b !== undefined) {
-      return f(Caml_option$8.valFromOption(a), Caml_option$8.valFromOption(b));
+      return f(Caml_option$9.valFromOption(a), Caml_option$9.valFromOption(b));
     } else {
       return 1;
     }
@@ -1592,9 +1592,9 @@ belt_Option.cmpU = cmpU$1;
 belt_Option.cmp = cmp$1;
 
 var Common$3 = Common_bs;
-var Caml_obj$7 = caml_obj;
+var Caml_obj$8 = caml_obj;
 var Belt_Option$7 = belt_Option;
-var Caml_option$7 = caml_option;
+var Caml_option$8 = caml_option;
 
 function minerName$1(minePos) {
   return "Miner" + String(minePos.x) + "." + String(minePos.y);
@@ -1604,8 +1604,8 @@ function roleMiner$1(creep, minePos) {
   if (Common$3.samePosition(creep.pos, minePos)) {
     var sources = creep.room.find(105);
     var source = creep.pos.findClosestByPath(sources);
-    return Belt_Option$7.forEach((source == null) ? undefined : Caml_option$7.some(source), (function (s) {
-                  if (Caml_obj$7.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
+    return Belt_Option$7.forEach((source == null) ? undefined : Caml_option$8.some(source), (function (s) {
+                  if (Caml_obj$8.caml_equal(creep.harvest(s), ERR_NOT_IN_RANGE)) {
                     creep.moveTo(s.pos);
                     return ;
                   }
@@ -1621,10 +1621,10 @@ RoleMiner_bs.roleMiner = roleMiner$1;
 
 var RoleBuilder_bs = {};
 
-var Caml_obj$6 = caml_obj;
+var Caml_obj$7 = caml_obj;
 var Caml_array$3 = caml_array;
 var Belt_Option$6 = belt_Option;
-var Caml_option$6 = caml_option;
+var Caml_option$7 = caml_option;
 
 function roleBuilder(creep) {
   if (creep.memory.building && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
@@ -1635,7 +1635,7 @@ function roleBuilder(creep) {
   }
   if (creep.memory.building) {
     var targets = creep.room.find(111);
-    if (targets.length > 0 && Caml_obj$6.caml_equal(creep.build(Caml_array$3.get(targets, 0)), ERR_NOT_IN_RANGE)) {
+    if (targets.length > 0 && Caml_obj$7.caml_equal(creep.build(Caml_array$3.get(targets, 0)), ERR_NOT_IN_RANGE)) {
       creep.moveTo(Caml_array$3.get(targets, 0).pos);
       return ;
     } else {
@@ -1645,8 +1645,8 @@ function roleBuilder(creep) {
   var resource = creep.pos.findClosestByPath(creep.room.find(106).filter(function (r) {
             return r.amount > 100;
           }));
-  return Belt_Option$6.forEach((resource == null) ? undefined : Caml_option$6.some(resource), (function (r) {
-                if (Caml_obj$6.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
+  return Belt_Option$6.forEach((resource == null) ? undefined : Caml_option$7.some(resource), (function (r) {
+                if (Caml_obj$7.caml_equal(creep.pickup(r), ERR_NOT_IN_RANGE)) {
                   creep.moveTo(r.pos);
                   return ;
                 }
@@ -1655,6 +1655,35 @@ function roleBuilder(creep) {
 }
 
 RoleBuilder_bs.roleBuilder = roleBuilder;
+
+var RoleClaimer_bs = {};
+
+var Caml_obj$6 = caml_obj;
+var Caml_option$6 = caml_option;
+
+var controllerId = "5bbcaeba9099fc012e639797";
+
+function roleClaimer(creep) {
+  var match = creep.room.name;
+  switch (match) {
+    case "E31N28" :
+        var controller = Game.getObjectById(controllerId);
+        var controller$1 = (controller == null) ? undefined : Caml_option$6.some(controller);
+        if (Caml_obj$6.caml_equal(creep.claimController(controller$1), ERR_NOT_IN_RANGE)) {
+          creep.moveTo(controller$1.pos);
+        }
+        break;
+    case "E32N28" :
+        creep.moveTo(0, 29);
+        break;
+    default:
+      console.log("claimer跑到了其他房间");
+  }
+  
+}
+
+RoleClaimer_bs.controllerId = controllerId;
+RoleClaimer_bs.roleClaimer = roleClaimer;
 
 var RoleRepairer_bs = {};
 
@@ -2876,6 +2905,7 @@ var RoleMiner = RoleMiner_bs;
 var Belt_Option = belt_Option;
 var Caml_option = caml_option;
 var RoleBuilder = RoleBuilder_bs;
+var RoleClaimer = RoleClaimer_bs;
 var RoleRepairer = RoleRepairer_bs;
 var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
@@ -3157,6 +3187,26 @@ function harvest(spawn) {
   
 }
 
+function claim(spawn) {
+  var bodies = [
+    CLAIM,
+    MOVE
+  ];
+  spawn.spawnCreep(bodies, "claimer", {
+        memory: {
+          role: "claimer"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "claimer") {
+          return RoleClaimer.roleClaimer(creep);
+        }
+        
+      });
+  
+}
+
 function loop(param) {
   var spawn = Game.spawns["Spawn1"];
   var room = spawn.room;
@@ -3166,7 +3216,8 @@ function loop(param) {
   outpostTransfer(room, spawn);
   build(spawn, 3);
   upgraders(spawn);
-  return towerDefence(spawn);
+  towerDefence(spawn);
+  return claim(spawn);
 }
 
 var upgraders_1 = Main_bs.upgraders = upgraders;
@@ -3181,9 +3232,11 @@ var outpostTransfer_1 = Main_bs.outpostTransfer = outpostTransfer;
 var build_1 = Main_bs.build = build;
 var transfer_1 = Main_bs.transfer = transfer;
 var harvest_1 = Main_bs.harvest = harvest;
+var claim_1 = Main_bs.claim = claim;
 var loop_1 = Main_bs.loop = loop;
 
 exports.build = build_1;
+exports.claim = claim_1;
 exports["default"] = Main_bs;
 exports.harvest = harvest_1;
 exports.loop = loop_1;

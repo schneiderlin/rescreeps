@@ -242,6 +242,21 @@ let harvest = spawn => {
   })
 }
 
+let claim = spawn => {
+  let bodies = [claim, move]
+  let name = "claimer"
+  let _ = spawn->spawnCreepOpts(bodies, name, {"memory": {"role": "claimer"}})
+
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "claimer" {
+      RoleClaimer.roleClaimer(creep)
+    }
+  })
+}
+
 // type globalState = {mutable reserve: Reserve.state}
 
 // let globalState = {
@@ -272,6 +287,7 @@ let loop = () => {
   build(spawn, 3)
   upgraders(spawn)
   towerDefence(spawn)
+  claim(spawn)
 
   // globalState.reserve = newReserve
 }

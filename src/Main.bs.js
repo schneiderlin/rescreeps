@@ -7,6 +7,7 @@ var RoleMiner = require("./RoleMiner.bs.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 var Caml_option = require("rescript/lib/js/caml_option.js");
 var RoleBuilder = require("./RoleBuilder.bs.js");
+var RoleClaimer = require("./RoleClaimer.bs.js");
 var RoleRepairer = require("./RoleRepairer.bs.js");
 var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
@@ -288,6 +289,26 @@ function harvest(spawn) {
   
 }
 
+function claim(spawn) {
+  var bodies = [
+    CLAIM,
+    MOVE
+  ];
+  spawn.spawnCreep(bodies, "claimer", {
+        memory: {
+          role: "claimer"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "claimer") {
+          return RoleClaimer.roleClaimer(creep);
+        }
+        
+      });
+  
+}
+
 function loop(param) {
   var spawn = Game.spawns["Spawn1"];
   var room = spawn.room;
@@ -297,7 +318,8 @@ function loop(param) {
   outpostTransfer(room, spawn);
   build(spawn, 3);
   upgraders(spawn);
-  return towerDefence(spawn);
+  towerDefence(spawn);
+  return claim(spawn);
 }
 
 exports.upgraders = upgraders;
@@ -312,5 +334,6 @@ exports.outpostTransfer = outpostTransfer;
 exports.build = build;
 exports.transfer = transfer;
 exports.harvest = harvest;
+exports.claim = claim;
 exports.loop = loop;
 /* No side effect */
