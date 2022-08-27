@@ -2910,24 +2910,30 @@ function upgraders(spawn) {
   
 }
 
-function towerDefence(spawn) {
-  var towerOpt = Game.getObjectById("630033cd4bcfd152983bccab");
-  var towerOpt$1 = (towerOpt == null) ? undefined : Caml_option.some(towerOpt);
-  if (!Belt_Option.isSome(towerOpt$1)) {
-    return ;
-  }
-  var closestDamagedStructure = towerOpt$1.pos.findClosestByRange(RoleRepairer.findRepairTargets(spawn));
+function roleTower(tower, spawn) {
+  var closestDamagedStructure = tower.pos.findClosestByRange(RoleRepairer.findRepairTargets(spawn));
   var closestDamagedStructure$1 = (closestDamagedStructure == null) ? undefined : Caml_option.some(closestDamagedStructure);
   if (Belt_Option.isSome(closestDamagedStructure$1)) {
-    towerOpt$1.repair(closestDamagedStructure$1);
+    tower.repair(closestDamagedStructure$1);
   }
-  var closestHostile = towerOpt$1.pos.findClosestByRange(103);
+  var closestHostile = tower.pos.findClosestByRange(103);
   var closestHostile$1 = (closestHostile == null) ? undefined : Caml_option.some(closestHostile);
   if (Belt_Option.isSome(closestHostile$1)) {
-    towerOpt$1.attack(closestHostile$1);
+    tower.attack(closestHostile$1);
     return ;
   }
   
+}
+
+function towerDefence(spawn) {
+  var towerOpt1 = Game.getObjectById("630033cd4bcfd152983bccab");
+  Belt_Option.forEach((towerOpt1 == null) ? undefined : Caml_option.some(towerOpt1), (function (t) {
+          return roleTower(t, spawn);
+        }));
+  var towerOpt2 = Game.getObjectById("6307978291299163c785029c");
+  return Belt_Option.forEach((towerOpt2 == null) ? undefined : Caml_option.some(towerOpt2), (function (t) {
+                return roleTower(t, spawn);
+              }));
 }
 
 var minePos1 = {
@@ -3040,20 +3046,24 @@ function outpostTransfer(_mainRoom, spawn) {
 }
 
 function build(spawn, n) {
+  var bodies = [
+    WORK,
+    WORK,
+    WORK,
+    WORK,
+    WORK,
+    CARRY,
+    MOVE,
+    MOVE,
+    MOVE
+  ];
   var builders = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "builder";
       });
   if (builders.length < n) {
     var newName = "Builder" + String(Game.time);
     console.log("Spawning new Builder: ", newName);
-    spawn.spawnCreep([
-          WORK,
-          WORK,
-          WORK,
-          CARRY,
-          MOVE,
-          MOVE
-        ], newName, {
+    spawn.spawnCreep(bodies, newName, {
           memory: {
             role: "builder"
           }
@@ -3160,6 +3170,7 @@ function loop(param) {
 }
 
 var upgraders_1 = Main_bs.upgraders = upgraders;
+var roleTower_1 = Main_bs.roleTower = roleTower;
 var towerDefence_1 = Main_bs.towerDefence = towerDefence;
 var minePos1_1 = Main_bs.minePos1 = minePos1;
 var minePos2_1 = Main_bs.minePos2 = minePos2;
@@ -3182,6 +3193,7 @@ exports.minePos2 = minePos2_1;
 exports.outpostMine = outpostMine_1;
 exports.outpostMinePos1 = outpostMinePos1_1;
 exports.outpostTransfer = outpostTransfer_1;
+exports.roleTower = roleTower_1;
 exports.towerDefence = towerDefence_1;
 exports.transfer = transfer_1;
 exports.upgraders = upgraders_1;

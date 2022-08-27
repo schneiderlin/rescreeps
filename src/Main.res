@@ -24,42 +24,44 @@ let upgraders = spawn => {
   })
 }
 
-let towerDefence = spawn => {
-  let towerOpt = game->getTowerById("630033cd4bcfd152983bccab")
-  if towerOpt->Belt.Option.isSome {
-    let tower = towerOpt->Belt.Option.getUnsafe
+let roleTower = (tower: tower, spawn) => {
+  // 维修
+  let closestDamagedStructure =
+    tower.pos->findClosestByRangeStructure(spawn->RoleRepairer.findRepairTargets)
+  if closestDamagedStructure->Belt.Option.isSome {
+    let _ = tower->repairT(closestDamagedStructure->Belt.Option.getUnsafe)
+  }
 
-    // 维修
-    let closestDamagedStructure =
-      tower.pos->findClosestByRangeStructure(spawn->RoleRepairer.findRepairTargets)
-    if closestDamagedStructure->Belt.Option.isSome {
-      let _ = tower->repairT(closestDamagedStructure->Belt.Option.getUnsafe)
-    }
-
-    // 攻击
-    let closestHostile = tower.pos->findClosestHostileCreepsByRange
-    if closestHostile->Belt.Option.isSome {
-      let _ = tower->attackT(closestHostile->Belt.Option.getUnsafe)
-    }
+  // 攻击
+  let closestHostile = tower.pos->findClosestHostileCreepsByRange
+  if closestHostile->Belt.Option.isSome {
+    let _ = tower->attackT(closestHostile->Belt.Option.getUnsafe)
   }
 }
 
+let towerDefence = spawn => {
+  let towerOpt1 = game->getTowerById("630033cd4bcfd152983bccab")
+  towerOpt1->Belt.Option.forEach(t => roleTower(t, spawn))
+  let towerOpt2 = game->getTowerById("6307978291299163c785029c")
+  towerOpt2->Belt.Option.forEach(t => roleTower(t, spawn))
+}
+
 let minePos1 = {
-  "roomName": "E32N28"
+  "roomName": "E32N28",
   "x": 5,
   "y": 16,
 }
 
 let minePos2 = {
-  "roomName": "E32N28"
+  "roomName": "E32N28",
   "x": 13,
   "y": 22,
 }
 
 let outpostMinePos1 = {
-  "roomName": "E33N28"
+  "roomName": "E33N28",
   "x": 10,
-  "y": 19
+  "y": 19,
 }
 
 let mine = (room, spawn) => {
@@ -134,6 +136,8 @@ let outpostTransfer = (_mainRoom, spawn) => {
 }
 
 let build = (spawn, n) => {
+  let bodies = [work, work, work, work, work, carry, move, move, move]
+
   // 生成
   let builders =
     game.creeps
@@ -145,12 +149,7 @@ let build = (spawn, n) => {
   if builders->Js.Array2.length < n {
     let newName = "Builder" ++ game.time->Belt.Int.toString
     Js.log2("Spawning new Builder: ", newName)
-    let _ =
-      spawn->spawnCreepOpts(
-        [work, work, work, carry, move, move],
-        newName,
-        {"memory": {"role": "builder"}},
-      )
+    let _ = spawn->spawnCreepOpts(bodies, newName, {"memory": {"role": "builder"}})
   }
 
   // 房间里面有没有工地
