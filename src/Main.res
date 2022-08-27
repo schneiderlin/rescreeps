@@ -98,7 +98,7 @@ let mine = (room, spawn) => {
 }
 
 let outpostMine = (_mainRoom, spawn) => {
-  let bodies = [work, move]
+  let bodies = [work, work, move]
 
   // 生成
   let name1 = RoleOutpostMiner.minerName(outpostMinePos1)
@@ -111,6 +111,24 @@ let outpostMine = (_mainRoom, spawn) => {
     let creep = game.creeps->Js.Dict.unsafeGet(name)
     if creep.memory.role == "outpostMiner1" {
       RoleOutpostMiner.roleMiner(creep, outpostMinePos1)
+    }
+  })
+}
+
+let outpostTransfer = (_mainRoom, spawn) => {
+  let bodies = [carry, carry, carry, carry, move, move]
+
+  // 生成
+  let name1 = RoleOutpostTransferer.transfererName(outpostMinePos1)
+  let _ = spawn->spawnCreepOpts(bodies, name1, {"memory": {"role": "outpostTransferer1"}})
+
+  // 分配任务
+  game.creeps
+  ->Js.Dict.keys
+  ->Js.Array2.forEach(name => {
+    let creep = game.creeps->Js.Dict.unsafeGet(name)
+    if creep.memory.role == "outpostTransferer1" {
+      RoleOutpostTransferer.roleTransferer(creep, outpostMinePos1)
     }
   })
 }
@@ -251,6 +269,7 @@ let loop = () => {
   transfer(spawn)
   mine(room, spawn)
   outpostMine(room, spawn)
+  outpostTransfer(room, spawn)
   build(spawn, 3)
   upgraders(spawn)
   towerDefence(spawn)

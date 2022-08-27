@@ -12,6 +12,7 @@ var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 var RoleTransferer = require("./RoleTransferer.bs.js");
 var RoleOutpostMiner = require("./RoleOutpostMiner.bs.js");
+var RoleOutpostTransferer = require("./RoleOutpostTransferer.bs.js");
 
 function upgraders(spawn) {
   var upgraders$1 = Js_dict.values(Game.creeps).filter(function (creep) {
@@ -125,6 +126,7 @@ function mine(room, spawn) {
 function outpostMine(_mainRoom, spawn) {
   var bodies = [
     WORK,
+    WORK,
     MOVE
   ];
   var name1 = RoleOutpostMiner.minerName(outpostMinePos1);
@@ -137,6 +139,31 @@ function outpostMine(_mainRoom, spawn) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "outpostMiner1") {
           return RoleOutpostMiner.roleMiner(creep, outpostMinePos1);
+        }
+        
+      });
+  
+}
+
+function outpostTransfer(_mainRoom, spawn) {
+  var bodies = [
+    CARRY,
+    CARRY,
+    CARRY,
+    CARRY,
+    MOVE,
+    MOVE
+  ];
+  var name1 = RoleOutpostTransferer.transfererName(outpostMinePos1);
+  spawn.spawnCreep(bodies, name1, {
+        memory: {
+          role: "outpostTransferer1"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "outpostTransferer1") {
+          return RoleOutpostTransferer.roleTransferer(creep, outpostMinePos1);
         }
         
       });
@@ -257,6 +284,7 @@ function loop(param) {
   transfer(spawn);
   mine(room, spawn);
   outpostMine(room, spawn);
+  outpostTransfer(room, spawn);
   build(spawn, 3);
   upgraders(spawn);
   return towerDefence(spawn);
@@ -269,6 +297,7 @@ exports.minePos2 = minePos2;
 exports.outpostMinePos1 = outpostMinePos1;
 exports.mine = mine;
 exports.outpostMine = outpostMine;
+exports.outpostTransfer = outpostTransfer;
 exports.build = build;
 exports.transfer = transfer;
 exports.harvest = harvest;

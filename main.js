@@ -1591,7 +1591,7 @@ belt_Option.eq = eq$1;
 belt_Option.cmpU = cmpU$1;
 belt_Option.cmp = cmp$1;
 
-var Common$2 = Common_bs;
+var Common$3 = Common_bs;
 var Caml_obj$7 = caml_obj;
 var Belt_Option$7 = belt_Option;
 var Caml_option$7 = caml_option;
@@ -1601,7 +1601,7 @@ function minerName$1(minePos) {
 }
 
 function roleMiner$1(creep, minePos) {
-  if (Common$2.samePosition(creep.pos, minePos)) {
+  if (Common$3.samePosition(creep.pos, minePos)) {
     var sources = creep.room.find(105);
     var source = creep.pos.findClosestByPath(sources);
     return Belt_Option$7.forEach((source == null) ? undefined : Caml_option$7.some(source), (function (s) {
@@ -2664,14 +2664,14 @@ belt_Array.cmp = cmp;
 belt_Array.eqU = eqU;
 belt_Array.eq = eq;
 
-var Common$1 = Common_bs;
+var Common$2 = Common_bs;
 var Caml_obj$2 = caml_obj;
-var Belt_Array = belt_Array;
+var Belt_Array$1 = belt_Array;
 var Caml_array = caml_array;
 var Belt_Option$2 = belt_Option;
 var Caml_option$2 = caml_option;
 
-function transfererName(minePos) {
+function transfererName$1(minePos) {
   return "Transferer" + String(minePos.x) + "." + String(minePos.y);
 }
 
@@ -2695,7 +2695,7 @@ function findAndTransfer(creep, allStructures, structureTypes) {
   }
 }
 
-function roleTransferer(creep, minePos) {
+function roleTransferer$1(creep, minePos) {
   var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
   if (creep.memory.transfering && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
     creep.memory.transfering = false;
@@ -2724,13 +2724,13 @@ function roleTransferer(creep, minePos) {
       return ;
     }
   }
-  var targetResource = Belt_Array.get(creep.room.find(106, {
+  var targetResource = Belt_Array$1.get(creep.room.find(106, {
             filter: (function (resource) {
-                return Common$1.samePosition(resource.pos, minePos);
+                return Common$2.samePosition(resource.pos, minePos);
               })
           }), 0);
   if (targetResource !== undefined) {
-    return Common$1.pickResource(creep, targetResource);
+    return Common$2.pickResource(creep, targetResource);
   }
   var resources = creep.room.find(106, {
         filter: (function (resource) {
@@ -2739,18 +2739,18 @@ function roleTransferer(creep, minePos) {
       });
   var resource = creep.pos.findClosestByPath(resources);
   if (!(resource == null)) {
-    return Common$1.pickResource(creep, resource);
+    return Common$2.pickResource(creep, resource);
   }
   
 }
 
-RoleTransferer_bs.transfererName = transfererName;
+RoleTransferer_bs.transfererName = transfererName$1;
 RoleTransferer_bs.findAndTransfer = findAndTransfer;
-RoleTransferer_bs.roleTransferer = roleTransferer;
+RoleTransferer_bs.roleTransferer = roleTransferer$1;
 
 var RoleOutpostMiner_bs = {};
 
-var Common = Common_bs;
+var Common$1 = Common_bs;
 var Caml_obj$1 = caml_obj;
 var Belt_Option$1 = belt_Option;
 var Caml_option$1 = caml_option;
@@ -2760,7 +2760,7 @@ function minerName(minePos) {
 }
 
 function roleMiner(creep, minePos) {
-  if (Common.samePosition(creep.pos, minePos)) {
+  if (Common$1.samePosition(creep.pos, minePos)) {
     var sources = creep.room.find(105);
     var source = creep.pos.findClosestByPath(sources);
     return Belt_Option$1.forEach((source == null) ? undefined : Caml_option$1.some(source), (function (s) {
@@ -2788,6 +2788,88 @@ function roleMiner(creep, minePos) {
 RoleOutpostMiner_bs.minerName = minerName;
 RoleOutpostMiner_bs.roleMiner = roleMiner;
 
+var RoleOutpostTransferer_bs = {};
+
+var Common = Common_bs;
+var Belt_Array = belt_Array;
+var RoleTransferer$1 = RoleTransferer_bs;
+
+function transfererName(minePos) {
+  return "Transferer" + minePos.roomName + String(minePos.x) + "." + String(minePos.y);
+}
+
+function roleTransferer(creep, minePos) {
+  var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
+  if (creep.memory.transfering && creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+    creep.memory.transfering = false;
+  }
+  if (!creep.memory.transfering && freeCapacity === 0) {
+    creep.memory.transfering = true;
+  }
+  if (creep.memory.transfering) {
+    var match = creep.room.name;
+    switch (match) {
+      case "E32N28" :
+          var allStructures = creep.room.find(107);
+          var hasTask = RoleTransferer$1.findAndTransfer(creep, allStructures, [
+                STRUCTURE_EXTENSION,
+                STRUCTURE_SPAWN
+              ]);
+          if (!hasTask) {
+            var hasTask$1 = RoleTransferer$1.findAndTransfer(creep, allStructures, [STRUCTURE_TOWER]);
+            if (!hasTask$1) {
+              var hasTask$2 = RoleTransferer$1.findAndTransfer(creep, allStructures, [STRUCTURE_CONTAINER]);
+              if (!hasTask$2) {
+                RoleTransferer$1.findAndTransfer(creep, allStructures, [STRUCTURE_STORAGE]);
+              }
+              
+            }
+            
+          }
+          break;
+      case "E33N28" :
+          creep.moveTo(0, 17);
+          break;
+      default:
+        console.log("外矿搬运工跑到了其他房间");
+    }
+    return ;
+  }
+  var match$1 = creep.room.name;
+  switch (match$1) {
+    case "E32N28" :
+        creep.moveTo(49, 17);
+        break;
+    case "E33N28" :
+        var targetResource = Belt_Array.get(creep.room.find(106, {
+                  filter: (function (resource) {
+                      return Common.samePosition(resource.pos, minePos);
+                    })
+                }), 0);
+        if (targetResource !== undefined) {
+          Common.pickResource(creep, targetResource);
+        } else {
+          var resources = creep.room.find(106, {
+                filter: (function (resource) {
+                    return resource.amount > freeCapacity;
+                  })
+              });
+          var resource = creep.pos.findClosestByPath(resources);
+          if (!(resource == null)) {
+            Common.pickResource(creep, resource);
+          }
+          
+        }
+        break;
+    default:
+      console.log("外矿搬运工跑到了其他房间");
+  }
+  
+}
+
+RoleOutpostTransferer_bs.transfererName = transfererName;
+RoleOutpostTransferer_bs.roleTransferer = roleTransferer;
+
 var Js_dict = js_dict;
 var Caml_obj = caml_obj;
 var RoleMiner = RoleMiner_bs;
@@ -2799,6 +2881,7 @@ var RoleUpgrader = RoleUpgrader_bs;
 var RoleHarvester = RoleHarvester_bs;
 var RoleTransferer = RoleTransferer_bs;
 var RoleOutpostMiner = RoleOutpostMiner_bs;
+var RoleOutpostTransferer = RoleOutpostTransferer_bs;
 
 function upgraders(spawn) {
   var upgraders$1 = Js_dict.values(Game.creeps).filter(function (creep) {
@@ -2912,6 +2995,7 @@ function mine(room, spawn) {
 function outpostMine(_mainRoom, spawn) {
   var bodies = [
     WORK,
+    WORK,
     MOVE
   ];
   var name1 = RoleOutpostMiner.minerName(outpostMinePos1);
@@ -2924,6 +3008,31 @@ function outpostMine(_mainRoom, spawn) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "outpostMiner1") {
           return RoleOutpostMiner.roleMiner(creep, outpostMinePos1);
+        }
+        
+      });
+  
+}
+
+function outpostTransfer(_mainRoom, spawn) {
+  var bodies = [
+    CARRY,
+    CARRY,
+    CARRY,
+    CARRY,
+    MOVE,
+    MOVE
+  ];
+  var name1 = RoleOutpostTransferer.transfererName(outpostMinePos1);
+  spawn.spawnCreep(bodies, name1, {
+        memory: {
+          role: "outpostTransferer1"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "outpostTransferer1") {
+          return RoleOutpostTransferer.roleTransferer(creep, outpostMinePos1);
         }
         
       });
@@ -3044,6 +3153,7 @@ function loop(param) {
   transfer(spawn);
   mine(room, spawn);
   outpostMine(room, spawn);
+  outpostTransfer(room, spawn);
   build(spawn, 3);
   upgraders(spawn);
   return towerDefence(spawn);
@@ -3056,6 +3166,7 @@ var minePos2_1 = Main_bs.minePos2 = minePos2;
 var outpostMinePos1_1 = Main_bs.outpostMinePos1 = outpostMinePos1;
 var mine_1 = Main_bs.mine = mine;
 var outpostMine_1 = Main_bs.outpostMine = outpostMine;
+var outpostTransfer_1 = Main_bs.outpostTransfer = outpostTransfer;
 var build_1 = Main_bs.build = build;
 var transfer_1 = Main_bs.transfer = transfer;
 var harvest_1 = Main_bs.harvest = harvest;
@@ -3070,6 +3181,7 @@ exports.minePos1 = minePos1_1;
 exports.minePos2 = minePos2_1;
 exports.outpostMine = outpostMine_1;
 exports.outpostMinePos1 = outpostMinePos1_1;
+exports.outpostTransfer = outpostTransfer_1;
 exports.towerDefence = towerDefence_1;
 exports.transfer = transfer_1;
 exports.upgraders = upgraders_1;
