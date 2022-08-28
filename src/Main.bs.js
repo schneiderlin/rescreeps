@@ -13,20 +13,20 @@ var RoleUpgrader = require("./RoleUpgrader.bs.js");
 var RoleHarvester = require("./RoleHarvester.bs.js");
 var RoleTransferer = require("./RoleTransferer.bs.js");
 var RoleOutpostMiner = require("./RoleOutpostMiner.bs.js");
+var RoleOutpostBuilder = require("./RoleOutpostBuilder.bs.js");
 var RoleOutpostTransferer = require("./RoleOutpostTransferer.bs.js");
 
 function upgraders(spawn) {
+  var name = "Upgrader" + spawn.room.name;
   var upgraders$1 = Js_dict.values(Game.creeps).filter(function (creep) {
         return creep.memory.role === "upgrader";
       });
   if (upgraders$1.length < 1) {
-    var newName = "Upgrader" + String(Game.time);
-    console.log("Spawning new upgrader: ", newName);
     spawn.spawnCreep([
           WORK,
           CARRY,
           MOVE
-        ], newName, {
+        ], name, {
           memory: {
             role: "upgrader"
           }
@@ -86,7 +86,7 @@ var outpostMinePos1 = {
   y: 19
 };
 
-function mine(room, spawn) {
+function mine1(room, spawn) {
   var energy = room.energyAvailable;
   var bodies = energy <= 300 ? [
       WORK,
@@ -124,6 +124,36 @@ function mine(room, spawn) {
         }
         if (creep.memory.role === "miner2") {
           return RoleMiner.roleMiner(creep, minePos2);
+        }
+        
+      });
+  
+}
+
+function mine2(room, spawn) {
+  var bodies = [
+    WORK,
+    WORK,
+    MOVE
+  ];
+  var pos = {
+    x: 25,
+    y: 42,
+    roomName: room.name
+  };
+  var name1 = RoleMiner.minerName(pos);
+  var err1 = spawn.spawnCreep(bodies, name1, {
+        memory: {
+          role: "miner3"
+        }
+      });
+  if (Caml_obj.caml_equal(err1, ERR_NOT_ENOUGH_ENERGY)) {
+    console.log("miner no energy");
+  }
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "miner3") {
+          return RoleMiner.roleMiner(creep, pos);
         }
         
       });
@@ -207,13 +237,10 @@ function build(spawn, n) {
         var creep = Game.creeps[name];
         if (creep.memory.role === "builder") {
           if (hasDamagedStructure) {
-            console.log("builder repair");
             return RoleRepairer.roleRepairer(spawn, creep);
           } else if (hasConstructionSite) {
-            console.log("builder build");
             return RoleBuilder.roleBuilder(creep);
           } else {
-            console.log("builder upgrade");
             return RoleUpgrader.roleUpgrader(creep);
           }
         }
@@ -309,17 +336,44 @@ function claim(spawn) {
   
 }
 
+function outpostBuild(spawn) {
+  var bodies = [
+    WORK,
+    WORK,
+    CARRY,
+    CARRY,
+    MOVE,
+    MOVE
+  ];
+  spawn.spawnCreep(bodies, "E31N28Builder", {
+        memory: {
+          role: "E31N28Builder"
+        }
+      });
+  Object.keys(Game.creeps).forEach(function (name) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role === "E31N28Builder") {
+          return RoleOutpostBuilder.roleBuilder(creep);
+        }
+        
+      });
+  
+}
+
 function loop(param) {
   var spawn = Game.spawns["Spawn1"];
-  var room = spawn.room;
+  var spawn2 = Game.spawns["Spawn2"];
+  var room1 = spawn.room;
+  var room2 = spawn2.room;
   transfer(spawn);
-  mine(room, spawn);
-  outpostMine(room, spawn);
-  outpostTransfer(room, spawn);
+  mine1(room1, spawn);
+  outpostMine(room1, spawn);
+  outpostTransfer(room1, spawn);
   build(spawn, 3);
   upgraders(spawn);
   towerDefence(spawn);
-  return claim(spawn);
+  upgraders(spawn2);
+  return mine2(room2, spawn2);
 }
 
 exports.upgraders = upgraders;
@@ -328,12 +382,14 @@ exports.towerDefence = towerDefence;
 exports.minePos1 = minePos1;
 exports.minePos2 = minePos2;
 exports.outpostMinePos1 = outpostMinePos1;
-exports.mine = mine;
+exports.mine1 = mine1;
+exports.mine2 = mine2;
 exports.outpostMine = outpostMine;
 exports.outpostTransfer = outpostTransfer;
 exports.build = build;
 exports.transfer = transfer;
 exports.harvest = harvest;
 exports.claim = claim;
+exports.outpostBuild = outpostBuild;
 exports.loop = loop;
 /* No side effect */
